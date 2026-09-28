@@ -118,3 +118,12 @@ footer{border-top:1px solid var(--line);padding:46px 0 40px;color:var(--muted);f
 .b-modal{position:fixed;inset:0;background:#0009;display:grid;place-items:center;z-index:50;padding:16px}.b-card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:28px;width:min(380px,100%);display:grid;gap:10px}.b-card h3{margin:0}
 .b-btn.more{display:block;margin:18px auto}
 @media(max-width:640px){.b-top{flex-direction:column;align-items:stretch}.b-auth{justify-content:flex-end}.b-list li img{width:64px;height:48px}}
+
+/* v2: 이벤트 전환 · 챌린지 */
+.ev-switch{display:inline-flex;gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:4px;margin-bottom:26px}.ev-switch a{padding:8px 16px;border-radius:999px;font-size:14px;font-weight:800;color:var(--muted)}.ev-switch a.on{background:var(--ink);color:#fff}
+.plain.two-col{grid-template-columns:1fr 1fr;margin-bottom:50px}.score{margin-bottom:50px;grid-template-columns:repeat(3,1fr)}.score .big{color:var(--teal)}
+.rules{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:4px 20px;margin:46px 0 50px}.rules summary{cursor:pointer;font-weight:900;font-size:18px;padding:14px 0;list-style:none}.rules summary::-webkit-details-marker{display:none}.rules summary::after{content:"+";float:right;color:var(--muted)}.rules[open] summary::after{content:"–"}.rules ol{margin:0 0 16px;padding-left:22px;color:#5b4a3a;font-size:14.5px;line-height:1.7}.rules li{margin-bottom:8px}
+.open-note{margin:0 0 14px;font-weight:700;color:#b46a00}
+.apply.closed{opacity:.55;pointer-events:none}
+@media(max-width:1000px){.plain.two-col{grid-template-columns:1fr}}
+@media(max-width:640px){.ev-switch{display:flex}.ev-switch a{flex:1;text-align:center;padding:8px 6px;font-size:13px}}

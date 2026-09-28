@@ -4,6 +4,7 @@
   var cfg = window.EVENT_CFG || {}; var msg = f.querySelector('.form-msg'); var btn = f.querySelector('button[type=submit]');
   if (!cfg.url || !cfg.anon || !window.supabase) { msg.textContent = f.dataset.err; msg.classList.add('err'); btn.disabled = true; return; }
   var sb = window.supabase.createClient(cfg.url, cfg.anon, { auth: { persistSession: false } });
+  if (f.dataset.open && new Date().toISOString().slice(0, 10) < f.dataset.open) { f.classList.add('closed'); btn.disabled = true; btn.textContent = btn.dataset.soon || btn.textContent; }
   f.addEventListener('submit', async function (e) {
     e.preventDefault(); msg.className = 'form-msg'; msg.textContent = '…'; btn.disabled = true;
     var d = new FormData(f); var v = function (k) { var x = (d.get(k) || '').toString().trim(); return x || null; };

@@ -196,8 +196,16 @@ EVENT = dict(
  apply=('2026-09-29','2026-10-12'), announce='2026-10-14', run=('2026-10-15','2026-10-28'), review_due='2026-10-31',
 )
 
+# ── 30일 챌린지 (2탄) — 대표 승인 2026-09-28: 게시판 + 본인 SNS(블로그 포함) 둘 다 필수, 거기서 심사 ──
+CHALLENGE = dict(
+ key='cubs-30day-2026-11', apply=('2026-10-13','2026-10-31'), run=('2026-11-01','2026-11-30'), review_due='2026-12-05', announce='2026-12-12',
+ prize_krw=690000, encouragement=5,
+)
+
 # ── 소식 ───────────────────────────────────────────────────────────────
 NEWS = [
+ ('2026-09-28','30일 챌린지 — Meta AI 글래스','11월 한 달, 4남매와 한글을 배우고 우리 게시판과 본인 SNS에 후기를 남기면 한 명에게 Ray-Ban Meta AI 글래스. 신청은 10월 13일부터.',
+  '30-Day Challenge — Meta AI glasses','Learn Korean with the cubs through November, post your review on our board and your own social channel, and one person gets Ray-Ban Meta AI glasses. Applications open 13 October.'),
  ('2026-09-28','AP Edu 문을 엽니다','한글컵스 공식 사이트. 4남매 소개, 유튜브 에피소드, 앱 안내, 체험단 모집, 게시판을 한곳에.',
   'AP Edu opens','The official Hangeul Cubs site — the four cubs, YouTube episodes, the app, the tester programme and the community board in one place.'),
  ('2026-09-28','받침 마스터 체험단 1기 모집','30명. 받침 마스터 팩을 무료로 열어 드리고, 2주 뒤 후기 한 편을 받습니다. 10월 12일까지 신청.',

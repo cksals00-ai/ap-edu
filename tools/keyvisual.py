@@ -1,133 +1,119 @@
 # -*- coding: utf-8 -*-
-"""30일 챌린지 키비주얼 v2 — 이벤트 포스터 구성(노란 바탕 · 큰 제목 · 말풍선 · 폰 목업 · 아래에서 고개 내민 4남매).
-기존 3D 원화 컷아웃과 앱 화면만 사용, 힉스필드 생성 없음. python3 tools/keyvisual.py assets/art"""
-from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
-import os, sys
-ART = os.path.join(os.path.dirname(__file__), '..', 'assets', 'art')
-BLACK = '/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc'; BOLD = '/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc'
-YEL = (255, 208, 64); YEL2 = (255, 224, 120); INK = (43, 33, 24); BROWN = (74, 44, 22); TEAL = (35, 125, 115); WHITE = (255, 255, 255)
+"""30일 챌린지 키비주얼 v3 — 깔끔한 정보형 포스터 (Noto Sans KR · 크림 바탕 · 흰 카드 · 노란 무대 위 4남매).
+언어 4종(ko·en·vi·fr) × 2비율(16:9 1600×900 / 4:5 1080×1350). 기존 3D 원화 컷아웃만 사용.
+실행: python3 tools/keyvisual.py  (Playwright + Chromium, 시스템 폰트 Noto Sans CJK KR 필요)"""
+import os, subprocess, json, tempfile
+from PIL import Image, ImageFilter
 
-def font(path, size):
-    for idx in (2, 0):
-        try: return ImageFont.truetype(path, size, index=idx)
-        except Exception: pass
-    return ImageFont.load_default()
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+ART = os.path.join(ROOT, 'assets', 'art')
+TMP = tempfile.mkdtemp(prefix='kv_')
 
-def cutout(name, height):
-    im = Image.open(os.path.join(ART, f'{name}_3d.png')).convert('RGBA')
-    a = im.split()[3].filter(ImageFilter.MinFilter(5)); im.putalpha(a)
-    # 살짝 따뜻하게 — 노란 바탕과 톤 맞추기
-    rgb = ImageEnhance.Color(im.convert('RGB')).enhance(1.08); im = Image.merge('RGBA', (*rgb.split(), a))
-    sc = height / im.height; return im.resize((int(im.width*sc), height), Image.LANCZOS)
+L = {
+ 'ko': dict(title='30일 챌린지', month='11월 한 달', sub='호랑이 4남매와 한글을 배우고, 게시판과 내 SNS에 후기를 남겨 주세요.',
+            prizeTag='대상 1명', prize='Meta AI 글래스', prize2='+ 격려상 5명 · 참가 무료 · 나라 상관없이',
+            info=[('신청', '10.13 – 10.31'), ('챌린지', '11.1 – 11.30'), ('발표', '12.12')],
+            fine='주최 AP Edu (A.P Holdings) · Meta, Ray-Ban, YouTube는 이 이벤트의 후원사가 아닙니다.'),
+ 'en': dict(title='30-Day Challenge', month='All of November', sub='Learn Korean with four tiger cubs, then share your review on our board and your own channel.',
+            prizeTag='Grand prize · 1 winner', prize='Meta AI glasses', prize2='+ 5 runner-up prizes · free entry · any country',
+            info=[('Apply', '13 – 31 Oct'), ('Challenge', '1 – 30 Nov'), ('Winner', '12 Dec')],
+            fine='Organised by AP Edu (A.P Holdings). Meta, Ray-Ban and YouTube are not sponsors of this event.'),
+ 'vi': dict(title='Thử thách 30 ngày', month='Suốt tháng 11', sub='Học tiếng Hàn cùng bốn chú hổ con, rồi chia sẻ cảm nhận trên bảng tin và trang cá nhân của bạn.',
+            prizeTag='Giải nhất · 1 người', prize='Kính Meta AI', prize2='+ 5 giải khuyến khích · miễn phí · mọi quốc gia',
+            info=[('Đăng ký', '13 – 31/10'), ('Thử thách', '1 – 30/11'), ('Công bố', '12/12')],
+            fine='Tổ chức bởi AP Edu (A.P Holdings). Meta, Ray-Ban và YouTube không phải nhà tài trợ của sự kiện.'),
+ 'fr': dict(title='Défi 30 jours', month='Tout le mois de novembre', sub='Apprenez le coréen avec quatre bébés tigres, puis partagez votre avis sur notre forum et sur vos réseaux.',
+            prizeTag='Grand prix · 1 gagnant', prize='Lunettes Meta AI', prize2='+ 5 prix d’encouragement · gratuit · tous pays',
+            info=[('Inscription', '13 – 31 oct.'), ('Défi', '1er – 30 nov.'), ('Résultats', '12 déc.')],
+            fine='Organisé par AP Edu (A.P Holdings). Meta, Ray-Ban et YouTube ne sont pas partenaires de ce jeu.'),
+}
 
-def shadow_of(im, blur=16, alpha=110, dy=10):
-    sh = Image.new('RGBA', (im.width+blur*4, im.height+blur*4), (0, 0, 0, 0))
-    s = Image.new('RGBA', im.size, (90, 50, 0, alpha)); s.putalpha(im.split()[3])
-    sh.paste(s, (blur*2, blur*2+dy), s); return sh.filter(ImageFilter.GaussianBlur(blur))
+def cutouts():
+    for n in ('kkobi', 'daho', 'aari', 'rami'):
+        im = Image.open(os.path.join(ART, f'{n}_3d.png')).convert('RGBA')
+        a = im.split()[3].filter(ImageFilter.MinFilter(5)).filter(ImageFilter.GaussianBlur(.6)); im.putalpha(a)
+        im.crop(im.getbbox()).save(os.path.join(TMP, f'{n}.png'))
 
-def paste_shadowed(base, im, x, y, blur=16, alpha=110, dy=10):
-    sh = shadow_of(im, blur, alpha, dy); base.paste(sh, (x-blur*2, y-blur*2), sh); base.paste(im, (x, y), im)
+CSS = '''*{margin:0;padding:0;box-sizing:border-box}
+:root{--cream:#fff8ec;--ink:#2b2118;--sub:#6e5a47;--line:#eadcc6;--honey:#e89b2a;--yel:#ffd040;--teal:#1f7f74}
+html,body{width:__W__px;height:__H__px;overflow:hidden}
+body{font-family:"Noto Sans CJK KR","Noto Sans KR",sans-serif;background:var(--cream);color:var(--ink);word-break:keep-all;-webkit-font-smoothing:antialiased;position:relative}
+.brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.16em;font-size:20px;color:var(--sub)}
+.brand img{width:34px;height:34px;border-radius:9px}.brand .sep{width:1px;height:18px;background:var(--line)}
+.month{display:inline-block;font-weight:700;color:var(--teal);font-size:26px;letter-spacing:-.01em}
+h1{font-weight:900;letter-spacing:-.035em;line-height:1.02}
+.sub{font-weight:500;color:var(--sub);line-height:1.5}
+.card{background:#fff;border-radius:28px;box-shadow:0 1px 0 rgba(43,33,24,.04),0 18px 40px -18px rgba(120,80,20,.28);position:relative;overflow:hidden}
+.card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--honey)}
+.tag{display:inline-block;background:#fff1d6;color:#a8650c;font-weight:700;border-radius:999px;padding:6px 14px;font-size:19px}
+.prize{font-weight:900;letter-spacing:-.03em;line-height:1.05}
+.prize2{color:var(--sub);font-weight:500}
+.info{display:flex}.info div{flex:1;padding:0 22px;border-left:1.5px solid var(--line)}.info div:first-child{padding-left:0;border-left:0}
+.info small{display:block;color:var(--sub);font-weight:500;font-size:18px;margin-bottom:6px}.info b{font-weight:900;letter-spacing:-.02em}
+.stage{position:absolute;background:var(--yel);overflow:hidden}
+.stage:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.35),transparent 55%)}
+.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.55) 2.2px,transparent 2.6px);background-size:34px 34px;opacity:.55}
+.cub{position:absolute;bottom:0;transform:translateX(-50%);filter:drop-shadow(0 14px 16px rgba(120,70,0,.28));z-index:2}
+.url{font-weight:900;letter-spacing:-.01em}.fine{color:#9a8670;font-weight:500;font-size:15px;line-height:1.45}
+'''
 
-def background(W, H):
-    im = Image.new('RGB', (W, H), YEL); d = ImageDraw.Draw(im)
-    # 은은한 점 무늬
-    for y in range(0, H, 46):
-        for x in range((y//46 % 2)*23, W, 46):
-            d.ellipse((x-3, y-3, x+3, y+3), fill=(255, 216, 92))
-    # 위쪽 밝은 빛
-    glow = Image.new('RGB', (W, H), YEL); g = ImageDraw.Draw(glow); g.ellipse((-W*0.2, -H*0.5, W*0.9, H*0.5), fill=YEL2)
-    im = Image.blend(im, glow.filter(ImageFilter.GaussianBlur(W*0.12)), 0.55)
-    return im
+def html_tall(l, t):
+    W, H = 1080, 1350
+    cubs = [('kkobi', 250, 380), ('daho', 430, 400), ('aari', 650, 410), ('rami', 850, 385)]
+    cub_h = ''.join(f'<img class="cub" src="{n}.png" style="left:{x}px;height:{h}px;bottom:-28px">' for n, x, h in cubs)
+    tsize = 116 if len(t['title']) <= 12 else 96
+    return f'''<!doctype html><html lang="{l}"><head><meta charset="utf-8"><style>{CSS.replace('__W__', str(W)).replace('__H__', str(H))}
+.wrap{{position:absolute;left:84px;right:84px;top:76px}}h1{{font-size:{tsize}px;margin:14px 0 18px}}.sub{{font-size:28px;max-width:860px}}
+.card{{margin-top:42px;padding:34px 40px 34px 48px}}.prize{{font-size:66px;margin:14px 0 10px}}.prize2{{font-size:22px}}
+.info{{margin-top:34px}}.info b{{font-size:34px}}
+.stage{{left:0;right:0;bottom:0;height:420px;border-radius:56px 56px 0 0}}
+.foot{{position:absolute;left:84px;right:84px;bottom:30px;z-index:3;display:flex;justify-content:space-between;align-items:flex-end}}
+.url{{font-size:28px;background:#fff;border-radius:999px;padding:10px 26px;box-shadow:0 8px 20px -10px rgba(120,70,0,.4)}}
+.fine{{position:absolute;right:84px;left:84px;top:{H-420-44}px;text-align:right;font-size:14px}}</style></head><body>
+<div class="wrap"><div class="brand"><img src="icon.png"><span>HANGEUL CUBS</span><span class="sep"></span><span>AP EDU</span></div>
+<h1><span class="month">{t['month']}</span><br>{t['title']}</h1><p class="sub">{t['sub']}</p>
+<div class="card"><span class="tag">{t['prizeTag']}</span><div class="prize">{t['prize']}</div><div class="prize2">{t['prize2']}</div></div>
+<div class="info">{''.join(f'<div><small>{a}</small><b>{b}</b></div>' for a, b in t['info'])}</div></div>
+<p class="fine">{t['fine']}</p>
+<div class="stage"><div class="dots"></div>{cub_h}</div>
+<div class="foot"><span class="url">edu.apholdings.kr</span></div></body></html>''', W, H
 
-def outlined(d, xy, text, f, fill, outline, w):
-    x, y = xy
-    for dx in range(-w, w+1):
-        for dy in range(-w, w+1):
-            if dx*dx+dy*dy <= w*w: d.text((x+dx, y+dy), text, font=f, fill=outline)
-    d.text((x, y), text, font=f, fill=fill)
+def html_wide(l, t):
+    W, H = 1600, 900
+    cubs = [('kkobi', 960, 390), ('daho', 1112, 410), ('aari', 1266, 418), ('rami', 1418, 398)]
+    cub_h = ''.join(f'<img class="cub" src="{n}.png" style="left:{x-830}px;height:{h}px;bottom:-34px">' for n, x, h in cubs)
+    tsize = 96 if len(t['title']) <= 12 else 80
+    return f'''<!doctype html><html lang="{l}"><head><meta charset="utf-8"><style>{CSS.replace('__W__', str(W)).replace('__H__', str(H))}
+.wrap{{position:absolute;left:88px;top:72px;width:830px}}h1{{font-size:{tsize}px;margin:12px 0 16px}}.sub{{font-size:24px;max-width:760px}}
+.card{{margin-top:34px;padding:28px 36px 28px 44px;max-width:700px}}.prize{{font-size:56px;margin:12px 0 8px}}.prize2{{font-size:20px}}
+.info{{margin-top:30px;max-width:700px}}.info b{{font-size:30px}}
+.stage{{left:830px;right:48px;top:48px;bottom:48px;border-radius:44px}}.big30{{position:absolute;right:40px;top:6px;font-weight:900;font-size:340px;line-height:1;letter-spacing:-.06em;color:#fff;opacity:.5;z-index:1}}
+.url{{position:absolute;left:88px;bottom:62px;font-size:26px}}.fine{{position:absolute;left:88px;bottom:32px;width:860px;font-size:13px}}
+.stage .url2{{position:absolute;left:32px;top:28px;z-index:3;font-weight:900;font-size:20px;color:var(--ink);background:#fff;border-radius:999px;padding:8px 18px}}</style></head><body>
+<div class="wrap"><div class="brand"><img src="icon.png"><span>HANGEUL CUBS</span><span class="sep"></span><span>AP EDU</span></div>
+<h1><span class="month">{t['month']}</span><br>{t['title']}</h1><p class="sub">{t['sub']}</p>
+<div class="card"><span class="tag">{t['prizeTag']}</span><div class="prize">{t['prize']}</div><div class="prize2">{t['prize2']}</div></div>
+<div class="info">{''.join(f'<div><small>{a}</small><b>{b}</b></div>' for a, b in t['info'])}</div></div>
+<span class="url">edu.apholdings.kr</span><p class="fine">{t['fine']}</p>
+<div class="stage"><div class="dots"></div><div class="big30">30</div>{cub_h}</div></body></html>''', W, H
 
-def bubble(d, box, radius, fill, tail=('b', 0.5)):
-    x0, y0, x1, y1 = box; d.rounded_rectangle(box, radius=radius, fill=fill)
-    side, t = tail; w = 26
-    if side == 'b':
-        cx = x0 + (x1-x0)*t; d.polygon([(cx-w, y1-2), (cx+w, y1-2), (cx+6, y1+34)], fill=fill)
-    else:
-        cy = y0 + (y1-y0)*t; d.polygon([(x1-2, cy-w), (x1-2, cy+w), (x1+34, cy+6)], fill=fill)
-
-def phone(screen_h):
-    """앱 「배우고 듣고」 화면을 넣은 폰 목업"""
-    src = Image.open(os.path.join(ART, 'screens.jpg')).convert('RGB').crop((579, 160, 820, 738))
-    sw = int(src.width * screen_h / src.height); scr = src.resize((sw, screen_h), Image.LANCZOS)
-    bz = int(screen_h * 0.028); W, H = sw + bz*2, screen_h + bz*2
-    ph = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(ph)
-    d.rounded_rectangle((0, 0, W-1, H-1), radius=int(W*0.16), fill=(28, 24, 22))
-    mask = Image.new('L', scr.size, 0); ImageDraw.Draw(mask).rounded_rectangle((0, 0, sw-1, screen_h-1), radius=int(W*0.12), fill=255)
-    ph.paste(scr, (bz, bz), mask)
-    d.rounded_rectangle((W*0.35, bz+6, W*0.65, bz+6+int(H*0.022)), radius=20, fill=(28, 24, 22))  # 노치
-    return ph
-
-def poster(lang, W, H, out):
-    im = background(W, H); d = ImageDraw.Draw(im)
-    tall = H > W  # 4:5 vs 16:9
-    if lang == 'ko':
-        top = 'HANGEUL CUBS'; t1 = '한글컵스'; t2 = '30일 챌린지'; sub = '11월 한 달, 4남매와 한글 · 후기 남기면'; prize1 = '한 명에게'; prize2 = 'Meta AI 글래스'; when = '신청 10.13 – 10.31'; site = 'edu.apholdings.kr'
-        small = '+ 격려상 5명 · 나라 상관없이 · 참가 무료'; fine = 'AP EDU · A.P HOLDINGS   Meta·Ray-Ban·YouTube는 후원사가 아닙니다'
-    else:
-        top = 'HANGEUL CUBS'; t1 = '30-Day'; t2 = 'Challenge'; sub = 'All of November · learn, then review'; prize1 = 'One learner wins'; prize2 = 'Meta AI glasses'; when = 'Apply 13 – 31 Oct'; site = 'edu.apholdings.kr'
-        small = '+ 5 prizes · any country · free entry'; fine = 'AP EDU · A.P HOLDINGS   Meta, Ray-Ban and YouTube are not sponsors'
-    s = W / 1080  # 스케일 기준 1080폭
-    if tall:
-        # ── 4:5 세로 (인스타) ──
-        d.text((W/2 - d.textlength(top, font=font(BOLD, int(30*s)))/2, int(70*s)), top, font=font(BOLD, int(30*s)), fill=BROWN)
-        f1 = font(BLACK, int(118*s)); f2 = font(BLACK, int(132*s))
-        for t, f, y, col in ((t1, f1, int(118*s), TEAL), (t2, f2, int(240*s), INK)):
-            tw = d.textlength(t, font=f); outlined(d, ((W-tw)/2, y), t, f, col, WHITE, int(8*s))
-        fs = font(BOLD, int(34*s)); tw = d.textlength(sub, font=fs); d.text(((W-tw)/2, int(408*s)), sub, font=fs, fill=BROWN)
-        # 말풍선 (경품)
-        bw, bh = int(600*s), int(170*s); bx, by = int(60*s), int(480*s)
-        bubble(d, (bx, by, bx+bw, by+bh), int(40*s), BROWN, ('r', 0.5))
-        d.text((bx+int(36*s), by+int(26*s)), prize1, font=font(BOLD, int(30*s)), fill=(255, 226, 150))
-        d.text((bx+int(36*s), by+int(68*s)), prize2, font=font(BLACK, int(58*s)), fill=YEL)
-        # 날짜 배지 + 사이트
-        fw = font(BLACK, int(34*s)); tw = d.textlength(when, font=fw); d.rounded_rectangle((bx, int(690*s), bx+tw+int(60*s), int(752*s)), radius=int(31*s), fill=INK)
-        d.text((bx+int(30*s), int(700*s)), when, font=fw, fill=YEL)
-        d.text((bx, int(772*s)), site, font=font(BLACK, int(30*s)), fill=BROWN)
-        d.text((bx, int(820*s)), small, font=font(BOLD, int(25*s)), fill=BROWN)
-        # 폰
-        ph = phone(int(520*s)); paste_shadowed(im, ph, int(720*s), int(450*s), blur=int(22*s), alpha=120, dy=int(16*s)); d = ImageDraw.Draw(im)
-        # 4남매 — 아래에서 고개 내밀기
-        floor = int(1215*s)
-        for n, h_, x in (('kkobi', 470, 150), ('daho', 520, 400), ('aari', 500, 690), ('rami', 480, 930)):
-            c = cutout(n, int(h_*s)); paste_shadowed(im, c, int(x*s) - c.width//2, floor - int(h_*s) + int(110*s), blur=int(18*s), alpha=100)
-        d = ImageDraw.Draw(im); d.rectangle((0, floor, W, H), fill=BROWN)
-        for x in range(0, W, int(90*s)): d.line((x, floor, x, H), fill=(92, 58, 30), width=2)
-        d.line((0, floor+int(38*s), W, floor+int(38*s)), fill=(92, 58, 30), width=2)
-        ff = font(BOLD, int(17*s)); tw = d.textlength(fine, font=ff); d.text(((W-tw)/2, floor + int(80*s)), fine, font=ff, fill=(210, 180, 140))
-    else:
-        # ── 16:9 가로 (사이트·유튜브) ──
-        s = H / 900
-        d.text((int(90*s), int(70*s)), top, font=font(BOLD, int(28*s)), fill=BROWN)
-        f1 = font(BLACK, int(96*s if lang=='ko' else 84*s)); f2 = font(BLACK, int(112*s if lang=='ko' else 96*s))
-        outlined(d, (int(86*s), int(110*s)), t1, f1, TEAL, WHITE, int(7*s)); outlined(d, (int(86*s), int(215*s)), t2, f2, INK, WHITE, int(7*s))
-        d.text((int(90*s), int(365*s)), sub, font=font(BOLD, int(30*s)), fill=BROWN)
-        bw, bh = int(560*s), int(160*s); bx, by = int(86*s), int(440*s)
-        bubble(d, (bx, by, bx+bw, by+bh), int(36*s), BROWN, ('b', 0.28))
-        d.text((bx+int(32*s), by+int(22*s)), prize1, font=font(BOLD, int(28*s)), fill=(255, 226, 150))
-        d.text((bx+int(32*s), by+int(62*s)), prize2, font=font(BLACK, int(58*s)), fill=YEL)
-        fw = font(BLACK, int(30*s)); tw = d.textlength(when, font=fw); d.rounded_rectangle((bx, int(660*s), bx+tw+int(56*s), int(716*s)), radius=int(28*s), fill=INK)
-        d.text((bx+int(28*s), int(669*s)), when, font=fw, fill=YEL)
-        d.text((bx+tw+int(80*s), int(676*s)), site, font=font(BOLD, int(26*s)), fill=BROWN)
-        d.text((int(90*s), int(738*s)), small, font=font(BOLD, int(24*s)), fill=BROWN)
-        ph = phone(int(470*s)); paste_shadowed(im, ph, int(660*s if lang=='ko' else 720*s), int(90*s), blur=int(22*s), alpha=120, dy=int(16*s)); d = ImageDraw.Draw(im)
-        floor = int(820*s)
-        for n, h_, x in (('kkobi', 470, 940), ('daho', 520, 1105), ('aari', 500, 1260), ('rami', 480, 1410)):
-            c = cutout(n, int(h_*s)); paste_shadowed(im, c, int(x*s) - c.width//2, floor - int(h_*s) + int(100*s), blur=int(16*s), alpha=100)
-        d = ImageDraw.Draw(im); d.rectangle((0, floor, W, H), fill=BROWN)
-        for x in range(0, W, int(90*s)): d.line((x, floor, x, H), fill=(92, 58, 30), width=2)
-        ff = font(BOLD, int(16*s)); d.text((int(90*s), floor + int(30*s)), fine, font=ff, fill=(210, 180, 140))
-    im.save(out, quality=90, optimize=True); return out
+SHOT = r'''
+import { chromium } from 'playwright';
+const jobs = JSON.parse(process.argv[2]);
+const b = await chromium.launch({executablePath: process.env.CHROMIUM || '/opt/pw-browsers/chromium'});
+for (const j of jobs) { const p = await b.newPage({viewport:{width:j.W,height:j.H}, deviceScaleFactor:1});
+  await p.goto('file://' + j.src); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(150);
+  await p.screenshot({path:j.png}); await p.close(); }
+await b.close();'''
 
 if __name__ == '__main__':
-    o = sys.argv[1] if len(sys.argv) > 1 else '.'
-    for l in ('ko', 'en'):
-        print(poster(l, 1600, 900, os.path.join(o, f'challenge_kv_{l}.jpg')), poster(l, 1080, 1350, os.path.join(o, f'challenge_sq_{l}.jpg')))
+    cutouts(); Image.open(os.path.join(ROOT, 'assets', 'cubs_icon64.png')).save(os.path.join(TMP, 'icon.png'))
+    jobs = []
+    for l, t in L.items():
+        for kind, fn in (('kv', html_wide), ('sq', html_tall)):
+            h, W, H = fn(l, t); src = os.path.join(TMP, f'{kind}_{l}.html'); open(src, 'w', encoding='utf-8').write(h)
+            jobs.append(dict(src=src, W=W, H=H, png=os.path.join(TMP, f'{kind}_{l}.png'), out=os.path.join(ART, f'challenge_{kind}_{l}.jpg')))
+    js = os.path.join(os.environ.get('SHOT_DIR', TMP), '_kv_shot.mjs'); open(js, 'w').write(SHOT)
+    subprocess.run(['node', js, json.dumps(jobs)], check=True, cwd=os.environ.get('NODE_CWD', ROOT))
+    for j in jobs:
+        Image.open(j['png']).convert('RGB').save(j['out'], quality=90, optimize=True, progressive=True); print(j['out'])

@@ -127,3 +127,11 @@ footer{border-top:1px solid var(--line);padding:46px 0 40px;color:var(--muted);f
 .apply.closed{opacity:.55;pointer-events:none}
 @media(max-width:1000px){.plain.two-col{grid-template-columns:1fr}}
 @media(max-width:640px){.ev-switch{display:flex}.ev-switch a{flex:1;text-align:center;padding:8px 6px;font-size:13px}}
+/* 챌린지 — 언어 선택 */
+.ev-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px}.ev-top .ev-switch{margin-bottom:0}
+.ev-langs{display:inline-flex;gap:2px;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--paper)}.ev-langs a{padding:6px 12px;border-radius:999px;font-size:13px;font-weight:800;letter-spacing:.04em;color:var(--muted)}.ev-langs a.on{background:var(--ink);color:#fff}
+.prize-fig img{border-radius:24px}
+.challenge h1{font-size:clamp(30px,4vw,50px);max-width:920px;letter-spacing:-.025em}.challenge .lead{max-width:760px}
+.prize-fig img{border:1px solid var(--line);box-shadow:0 24px 50px -34px rgba(120,80,20,.45)}
+.top .brand{flex-shrink:0}.top nav{min-width:0}
+@media(max-width:640px){.top .gicon{display:none}}

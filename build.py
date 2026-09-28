@@ -2,7 +2,7 @@
 """AP Edu — Hangeul Cubs 사이트 빌더. python3 build.py → 정적 파일 (GitHub Pages, edu.apholdings.kr)."""
 import os, html
 from content import CUBS, UNITS, LESSONS, EPISODES, EVENT, CHALLENGE, NEWS, STORE, YT, APP_ID
-OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '2'
+OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '4'
 e = html.escape
 T = {
  'ko': dict(lang='ko', other='en', otherLabel='EN',
@@ -39,6 +39,9 @@ T = {
  ),
 }
 
+from challenge_i18n import T_EXTRA
+T.update(T_EXTRA)
+
 def shell(l, title, desc, path, body, og=None, extra_head=''):
     t = T[l]; alt = f'/{t["other"]}{path[3:]}'
     nav = ''.join(f'<a href="{h}"{" class=on" if path == h or (h != f"/{l}/" and path.startswith(h)) else ""}>{e(n)}</a>' for h, n in t['nav'])
@@ -51,7 +54,7 @@ def shell(l, title, desc, path, body, og=None, extra_head=''):
 <header class="top"><a class="brand" href="/{l}/"><img src="/assets/ap_edu_wordmark.svg" alt="AP Edu" height="22"><img class="gicon" src="/assets/cubs_icon64.png" width="22" height="22" alt=""><span class="game">HANGEUL CUBS</span></a><nav>{nav}</nav><a class="lang" href="{alt}">{t['otherLabel']}</a></header>
 <main>{body}</main>
 <footer><div class="wrap"><div class="fgrid"><div><img src="/assets/ap_edu_wordmark.svg" alt="AP Edu" height="20"><p>{e(t['studio'])}</p></div>
-<div><a href="{STORE[l]}" target="_blank" rel="noopener">{e(t['store'])}</a> · <a href="{YT}" target="_blank" rel="noopener">{e(t['ytch'])}</a><br><a href="https://www.apholdings.kr/{l}/">{e(t['company'])} — apholdings.kr</a> · <a href="https://www.apholdings.kr/hangeulcubs_privacy.html">{e(t['privacy'])}</a></div></div><p class="fine">{e(t['footer_note'])}</p></div></footer>
+<div><a href="{STORE.get(l, STORE['en'])}" target="_blank" rel="noopener">{e(t['store'])}</a> · <a href="{YT}" target="_blank" rel="noopener">{e(t['ytch'])}</a><br><a href="https://www.apholdings.kr/{l if l in ('ko', 'en') else 'en'}/">{e(t['company'])} — apholdings.kr</a> · <a href="https://www.apholdings.kr/hangeulcubs_privacy.html">{e(t['privacy'])}</a></div></div><p class="fine">{e(t['footer_note'])}</p></div></footer>
 <script src="/assets/site.js?v={V}" defer></script></body></html>'''
 
 def out(path, text):
@@ -74,6 +77,38 @@ def lesson_rows(l, host=None, unit=None):
     free_ids = [x[0] for x in LESSONS if x[2] != 'master']; master_ids = [x[0] for x in LESSONS if x[2] == 'master']
     num = lambda i: str(free_ids.index(i) + 1) if i in free_ids else 'M' + str(master_ids.index(i) + 1)
     return ''.join(f'<li{" class=master" if x[2]=="master" else ""}><i>{num(x[0])}</i><div><b>{e(x[3])}</b><span>{e(x[4])}</span></div><em>{e(name[x[1]])}</em></li>' for x in rows)
+
+CH_LANGS = [('ko', 'KO'), ('en', 'EN'), ('vi', 'VI'), ('fr', 'FR')]
+def build_challenge(l, d, eh):
+    C = CHALLENGE; ca0, ca1 = C['apply']; h = d['h']; fx = d['fx']
+    tl = l if l in ('ko', 'en') else 'en'  # 체험단·게시판은 한/영만
+    sw = f'<div class="ev-switch"><a href="/{tl}/event/">{e(h["tester"])}</a><a href="/{l}/event/challenge/" class=on>{e(h["ch"])}</a></div>'
+    langs = '<nav class="ev-langs" aria-label="Language">' + ''.join(f'<a href="/{k}/event/challenge/" hreflang="{k}"{" class=on" if k == l else ""}>{n}</a>' for k, n in CH_LANGS) + '</nav>'
+    steps_h = ''.join(f'<li><b>{e(a)}</b><time>{e(b)}</time><p>{e(c_)}</p></li>' for a, b, c_ in d['steps'])
+    do_h = ''.join(f'<li><b>{e(a)}</b><p>{e(b)}</p></li>' for a, b in d['do'])
+    score_h = ''.join(f'<article><b class="big">{a}</b><h3>{e(h_)}</h3><p>{e(d_)}</p></article>' for a, h_, d_ in d['score'])
+    prize_h = ''.join(f'<li><b>{e(a)}</b><p>{e(b)}</p></li>' for a, b in d['prize'])
+    rules_h = ''.join(f'<li>{e(x)}</li>' for x in d['rules'])
+    cform = f'''<form id="apply" class="apply" data-lang="{l}" data-event="{C['key']}" data-open="{ca0}" data-ok="{e(fx['ok'], True)}" data-err="{e(fx['err'], True)}" data-many="{e(fx['many'], True)}">
+<label>{e(fx['name'])}<input name="name" required maxlength="40"></label>
+<label>{e(fx['email'])}<input name="email" type="email" required maxlength="120"></label>
+<label>{e(fx['learner'])}<select name="learner" required>{''.join(f'<option value="{v}">{e(k)}</option>' for v, k in fx['learners'])}</select></label>
+<label>{e(fx['age'])}<select name="age_band">{''.join(f'<option value="{e(v)}">{e(v)}</option>' for v in fx['ages'])}</select></label>
+<label>{e(fx['country'])}<input name="country" required maxlength="40"></label>
+<label>{e(fx['device'])}<select name="device" required>{''.join(f'<option value="{v}">{e(k)}</option>' for v, k in fx['devices'])}</select></label>
+<label class="full">{e(fx['channel'])}<input name="channel" required maxlength="200" placeholder="https://"></label>
+<label class="full">{e(fx['note'])}<textarea name="note" maxlength="600" rows="3"></textarea></label>
+<label class="full check"><input type="checkbox" name="consent" required> <span>{e(fx['consent'])}</span></label>
+<div class="full actions"><button class="btn" type="submit" data-soon="{e(d['soon'], True)}">{e(fx['submit'])}</button><p class="form-msg" role="status"></p></div></form>'''
+    body = f'''<section class="page event challenge"><div class="wrap"><div class="ev-top">{sw}{langs}</div><span class="eyebrow">{e(h['eyebrow'])}</span><h1>{e(d['title'])}</h1><p class="lead">{e(d['lead'])}</p>
+<figure class="wide prize-fig"><picture><source media="(max-width:640px)" srcset="/assets/art/challenge_sq_{l}.jpg"><img src="/assets/art/challenge_kv_{l}.jpg" alt="{e(h['page'], True)}" width="1600" height="900"></picture></figure>
+<ol class="steps">{steps_h}</ol>
+<div class="sh"><h2>{e(h['do'])}</h2><p>{e(h['doNote'])}</p></div><ul class="plain two-col">{do_h}</ul>
+<div class="sh"><h2>{e(h['score'])}</h2><p>{e(h['scoreNote'])}</p></div><div class="fgrid4 score">{score_h}</div>
+<div class="sh"><h2>{e(h['prize'])}</h2></div><ul class="plain">{prize_h}</ul>
+<details class="rules"><summary>{e(h['rules'])}</summary><ol>{rules_h}</ol></details>
+<div class="sh" id="form"><h2>{e(h['apply'])}</h2><p>{ca0} – {ca1}</p></div><p class="note open-note">{e(d['form_note'])}</p>{cform}</div></section>'''
+    out(f'/{l}/event/challenge/index.html', shell(l, h['page'], d['lead'], f'/{l}/event/challenge/', body, og=f'/assets/art/challenge_kv_{l}.jpg', extra_head=eh))
 
 for l in ('ko', 'en'):
     t = T[l]
@@ -206,31 +241,9 @@ for l in ('ko', 'en'):
         c_form_note = f'Applications open on {ca0}. Until then, join the October tester round.'
         c_soon = 'Opens 13 October'
         fx = dict(name='Name or nickname', email='Email', learner='Who is learning?', learners=[('child', 'A child (parent applies)'), ('adult', 'An adult · me'), ('family', 'The whole family'), ('teacher', 'A teacher · classroom')], age='Child’s age band (optional)', ages=['', '4–6', '7–9', '10–12', '13+'], country='Country · region', device='Device', devices=[('iphone', 'iPhone'), ('ipad', 'iPad'), ('both', 'Both')], channel='Your blog or social channel where the review will go', note='One line (optional — why Korean?)', consent='I have read the rules and agree that my details are used only to run the event and that my review may be quoted.', submit='Apply for the challenge', ok='Got it. We’ll email you on 1 November with the kick-off.', err='Couldn’t send. Please try again in a moment.', many='This email has already applied.')
-    steps_h = ''.join(f'<li><b>{e(a)}</b><time>{e(b)}</time><p>{e(c_)}</p></li>' for a, b, c_ in c_steps)
-    do_h = ''.join(f'<li><b>{e(a)}</b><p>{e(b)}</p></li>' for a, b in c_do)
-    score_h = ''.join(f'<article><b class="big">{a}</b><h3>{e(h_)}</h3><p>{e(d_)}</p></article>' for a, h_, d_ in c_score)
-    prize_h = ''.join(f'<li><b>{e(a)}</b><p>{e(b)}</p></li>' for a, b in c_prize)
-    rules_h = ''.join(f'<li>{e(x)}</li>' for x in c_rules)
-    cform = f'''<form id="apply" class="apply" data-lang="{l}" data-event="{C['key']}" data-open="{ca0}" data-ok="{e(fx['ok'], True)}" data-err="{e(fx['err'], True)}" data-many="{e(fx['many'], True)}">
-<label>{e(fx['name'])}<input name="name" required maxlength="40"></label>
-<label>{e(fx['email'])}<input name="email" type="email" required maxlength="120"></label>
-<label>{e(fx['learner'])}<select name="learner" required>{''.join(f'<option value="{v}">{e(k)}</option>' for v, k in fx['learners'])}</select></label>
-<label>{e(fx['age'])}<select name="age_band">{''.join(f'<option value="{e(v)}">{e(v)}</option>' for v in fx['ages'])}</select></label>
-<label>{e(fx['country'])}<input name="country" required maxlength="40"></label>
-<label>{e(fx['device'])}<select name="device" required>{''.join(f'<option value="{v}">{e(k)}</option>' for v, k in fx['devices'])}</select></label>
-<label class="full">{e(fx['channel'])}<input name="channel" required maxlength="200" placeholder="https://"></label>
-<label class="full">{e(fx['note'])}<textarea name="note" maxlength="600" rows="3"></textarea></label>
-<label class="full check"><input type="checkbox" name="consent" required> <span>{e(fx['consent'])}</span></label>
-<div class="full actions"><button class="btn" type="submit" data-soon="{e(c_soon, True)}">{e(fx['submit'])}</button><p class="form-msg" role="status"></p></div></form>'''
-    body = f'''<section class="page event challenge"><div class="wrap">{sw("challenge")}<span class="eyebrow">{'30일 챌린지 · 11월' if l=='ko' else '30-Day Challenge · November'}</span><h1>{e(c_title)}</h1><p class="lead">{e(c_lead)}</p>
-<figure class="wide prize-fig"><img src="/assets/art/challenge_kv_{l}.jpg" alt="" width="1600" height="900"></figure>
-<ol class="steps">{steps_h}</ol>
-<div class="sh"><h2>{'해야 하는 것' if l=='ko' else 'What to do'}</h2><p>{'게시판과 본인 SNS, 둘 다 남겨야 심사 대상이에요.' if l=='ko' else 'Both the board review and your own social post are required to be judged.'}</p></div><ul class="plain two-col">{do_h}</ul>
-<div class="sh"><h2>{'심사 기준 100점' if l=='ko' else 'Judging · 100 points'}</h2><p>{'추첨이 아니라 심사예요. 기준은 이 셋뿐.' if l=='ko' else 'Judged, not drawn. These three criteria only.'}</p></div><div class="fgrid4 score">{score_h}</div>
-<div class="sh"><h2>{'경품' if l=='ko' else 'Prizes'}</h2></div><ul class="plain">{prize_h}</ul>
-<details class="rules"><summary>{'공식 규칙 10조' if l=='ko' else 'Official rules'}</summary><ol>{rules_h}</ol></details>
-<div class="sh" id="form"><h2>{'신청' if l=='ko' else 'Apply'}</h2><p>{ca0} – {ca1}</p></div><p class="note open-note">{e(c_form_note)}</p>{cform}</div></section>'''
-    out(f'/{l}/event/challenge/index.html', shell(l, ('30일 챌린지 — Meta AI 글래스 | Hangeul Cubs' if l == 'ko' else '30-Day Challenge — Meta AI glasses | Hangeul Cubs'), c_lead, f'/{l}/event/challenge/', body, og=f'/assets/art/challenge_kv_{l}.jpg', extra_head=eh))
+    H_ = dict(ko=dict(eyebrow='30일 챌린지 · 11월', do='해야 하는 것', doNote='게시판과 본인 SNS, 둘 다 남겨야 심사 대상이에요.', score='심사 기준 100점', scoreNote='추첨이 아니라 심사예요. 기준은 이 셋뿐.', prize='경품', rules='공식 규칙 10조', apply='신청', tester='체험단 1기 · 10월', ch='30일 챌린지 · 11월', page='30일 챌린지 — Meta AI 글래스 | Hangeul Cubs'),
+              en=dict(eyebrow='30-Day Challenge · November', do='What to do', doNote='Both the board review and your own social post are required to be judged.', score='Judging · 100 points', scoreNote='Judged, not drawn. These three criteria only.', prize='Prizes', rules='Official rules', apply='Apply', tester='Testers · October', ch='30-Day Challenge · November', page='30-Day Challenge — Meta AI glasses | Hangeul Cubs'))[l]
+    build_challenge(l, dict(title=c_title, lead=c_lead, steps=c_steps, do=c_do, score=c_score, prize=c_prize, rules=c_rules, form_note=c_form_note, soon=c_soon, fx=fx, h=H_), eh)
 
     # BOARD
     bt = '게시판' if l == 'ko' else 'Community'
@@ -244,10 +257,14 @@ for l in ('ko', 'en'):
     body = f'<section class="page"><div class="wrap"><span class="eyebrow">HANGEUL CUBS</span><h1>{e(t["news"])}</h1><div class="ngrid list">{items}</div></div></section>'
     out(f'/{l}/news/index.html', shell(l, f'{t["news"]} — Hangeul Cubs', 'AP Edu news', f'/{l}/news/', body))
 
+from challenge_i18n import CH_I18N
+for l, d in CH_I18N.items():
+    build_challenge(l, d, '<script src="/assets/event-config.js?v=1"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script><script src="/assets/event.js?v=2" defer></script>')
+
 out('/index.html', '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/ko/"><link rel="canonical" href="https://edu.apholdings.kr/ko/"><script>location.replace((navigator.language||"").toLowerCase().startsWith("ko")?"/ko/":"/en/")</script></head><body></body></html>')
 out('/404.html', '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/ko/"></head><body></body></html>')
 out('/CNAME', 'edu.apholdings.kr'); out('/.nojekyll', '')
-urls = [f'/{l}/{s}' for l in ('ko', 'en') for s in ['', 'cubs/', 'episodes/', 'app/', 'event/', 'event/challenge/', 'board/', 'news/'] + [f'cubs/{c["id"]}/' for c in CUBS]]
+urls = [f'/{l}/{s}' for l in ('ko', 'en') for s in ['', 'cubs/', 'episodes/', 'app/', 'event/', 'event/challenge/', 'board/', 'news/'] + [f'cubs/{c["id"]}/' for c in CUBS]] + ['/vi/event/challenge/', '/fr/event/challenge/']
 out('/sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(f'<url><loc>{ORIGIN}{u}</loc></url>' for u in urls) + '</urlset>')
 out('/robots.txt', f'User-agent: *\nAllow: /\nSitemap: {ORIGIN}/sitemap.xml\n')
 print('built', len(urls), 'pages')

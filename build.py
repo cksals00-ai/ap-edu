@@ -223,14 +223,14 @@ for l in ('ko', 'en'):
 <label class="full check"><input type="checkbox" name="consent" required> <span>{e(fx['consent'])}</span></label>
 <div class="full actions"><button class="btn" type="submit" data-soon="{e(c_soon, True)}">{e(fx['submit'])}</button><p class="form-msg" role="status"></p></div></form>'''
     body = f'''<section class="page event challenge"><div class="wrap">{sw("challenge")}<span class="eyebrow">{'30일 챌린지 · 11월' if l=='ko' else '30-Day Challenge · November'}</span><h1>{e(c_title)}</h1><p class="lead">{e(c_lead)}</p>
-<figure class="wide prize-fig"><img src="/assets/art/scene_daho_point.jpg" alt="" width="1600" height="893"></figure>
+<figure class="wide prize-fig"><img src="/assets/art/challenge_kv_{l}.jpg" alt="" width="1600" height="900"></figure>
 <ol class="steps">{steps_h}</ol>
 <div class="sh"><h2>{'해야 하는 것' if l=='ko' else 'What to do'}</h2><p>{'게시판과 본인 SNS, 둘 다 남겨야 심사 대상이에요.' if l=='ko' else 'Both the board review and your own social post are required to be judged.'}</p></div><ul class="plain two-col">{do_h}</ul>
 <div class="sh"><h2>{'심사 기준 100점' if l=='ko' else 'Judging · 100 points'}</h2><p>{'추첨이 아니라 심사예요. 기준은 이 셋뿐.' if l=='ko' else 'Judged, not drawn. These three criteria only.'}</p></div><div class="fgrid4 score">{score_h}</div>
 <div class="sh"><h2>{'경품' if l=='ko' else 'Prizes'}</h2></div><ul class="plain">{prize_h}</ul>
 <details class="rules"><summary>{'공식 규칙 10조' if l=='ko' else 'Official rules'}</summary><ol>{rules_h}</ol></details>
 <div class="sh" id="form"><h2>{'신청' if l=='ko' else 'Apply'}</h2><p>{ca0} – {ca1}</p></div><p class="note open-note">{e(c_form_note)}</p>{cform}</div></section>'''
-    out(f'/{l}/event/challenge/index.html', shell(l, ('30일 챌린지 — Meta AI 글래스 | Hangeul Cubs' if l == 'ko' else '30-Day Challenge — Meta AI glasses | Hangeul Cubs'), c_lead, f'/{l}/event/challenge/', body, og='/assets/art/scene_daho_point.jpg', extra_head=eh))
+    out(f'/{l}/event/challenge/index.html', shell(l, ('30일 챌린지 — Meta AI 글래스 | Hangeul Cubs' if l == 'ko' else '30-Day Challenge — Meta AI glasses | Hangeul Cubs'), c_lead, f'/{l}/event/challenge/', body, og=f'/assets/art/challenge_kv_{l}.jpg', extra_head=eh))
 
     # BOARD
     bt = '게시판' if l == 'ko' else 'Community'

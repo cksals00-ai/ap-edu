@@ -1,0 +1,91 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style></head>
+<body><canvas id="c" width="1920" height="1080"></canvas>
+<script src="lib.js"></script>
+<script>
+/* HANGEUL CUBS — 본편 엔드카드 12초 (구독 · 좋아요 · 알림 유도 + 유튜브 최종 화면 자리)
+   ?next=ㅕ&nextRom=YEO
+   0.00–0.55  노란 원이 아래에서 퍼지며 화면 전환
+   0.40–1.00  제목 · 빈 자리 2칸(다음 레슨 / 전체 레슨) · 구독 원 자리 · 4남매 등장
+   1.20–3.70  손가락이 SUBSCRIBE → 좋아요 → 알림 종을 차례로 누른다 (각 0.6초 간격, 120BPM)
+   3.70–12.0  유지 (유튜브 최종 화면 요소가 이 위에 얹힌다)
+   유튜브 최종 화면 요소 좌표(1920×1080 기준): 동영상 A x110 y300 w620 h349 · 재생목록 B x790 y300 w620 h349 · 구독 원 중심(1640,470) 지름 250 */
+const DUR=12.0;
+const NEXT=Q.get('next')||'', NEXTROM=(Q.get('nextRom')||'').toUpperCase();
+const SLOT=[{x:110,y:300,w:620,h:349,label:'NEXT LESSON',ko:'다음 레슨'},{x:790,y:300,w:620,h:349,label:'ALL LESSONS',ko:'전체 레슨'}], SUB={x:1640,y:470,r:125};
+const BTN={sub:{x:300,y:780},like:{x:620,y:780},bell:{x:800,y:780}};
+const CLICK={sub:1.55,like:2.45,bell:3.25};
+const THUMB=new Path2D('M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z');
+const BELL=new Path2D('M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z');
+const HAND=new Path2D('M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z');
+
+function bg(t){ let gr=g.createRadialGradient(W*.5,H*.42,80,W*.5,H*.5,W*.75); gr.addColorStop(0,C.cream); gr.addColorStop(1,C.cream2); g.fillStyle=gr; g.fillRect(0,0,W,H);
+  const wp=eIOC(P(t,0,.55)); if(wp<=0) return; const R=lerp(0,Math.hypot(W,H)*1.05,wp);
+  g.save(); g.beginPath(); g.arc(W/2,H+60,R,0,Math.PI*2); g.clip();
+  let y=g.createRadialGradient(W*.45,H*.3,60,W*.5,H*.55,W*.8); y.addColorStop(0,C.yel2); y.addColorStop(.55,C.yel); y.addColorStop(1,'#f7b92c'); g.fillStyle=y; g.fillRect(0,0,W,H);
+  g.fillStyle='rgba(255,236,160,.5)'; const off=(t*16)%52; for(let yy=-52;yy<H+52;yy+=52) for(let xx=((yy/52|0)%2)*26;xx<W;xx+=52){ g.beginPath(); g.arc(xx,yy-off,3,0,Math.PI*2); g.fill(); }
+  g.restore(); if(wp<1){ g.save(); g.globalAlpha=(1-wp)*.6; g.lineWidth=18; g.strokeStyle='#fff3c4'; g.beginPath(); g.arc(W/2,H+60,R,0,Math.PI*2); g.stroke(); g.restore(); } }
+
+function icon(path,x,y,size,col,rot=0){ g.save(); g.translate(x,y); g.rotate(rot); g.scale(size/24,size/24); g.translate(-12,-12); g.fillStyle=col; g.fill(path); g.restore(); }
+function clickRing(x,y,t0,t){ const d=t-t0; if(d<0||d>.45) return; const p=eOC(d/.45); g.save(); g.globalAlpha=(1-p)*.8; g.lineWidth=lerp(10,2,p); g.strokeStyle='#fff'; g.beginPath(); g.arc(x,y,lerp(20,110,p),0,Math.PI*2); g.stroke(); g.restore(); }
+
+function render(t){
+  g.setTransform(1,0,0,1,0,0); g.globalAlpha=1; noShadow(); bg(t);
+  const ap=i=>eOB(cl((t-.4-i*.08)/.4),1.5);
+  // 제목
+  const ta=ap(0); if(ta>0){ g.save(); g.globalAlpha=cl(ta); g.translate(0,(1-ta)*24); g.textAlign='left'; g.textBaseline='alphabetic';
+    g.font=`900 66px ${FONT}`; g.fillStyle=C.ink; g.fillText('See you in the next lesson!',110,190);
+    g.font=`700 30px ${FONT}`; g.fillStyle=C.brown; g.fillText('다음 레슨에서 만나요 · Thanks for learning with the cubs',114,240); g.restore(); }
+  // 최종 화면 자리 (유튜브 요소가 얹힐 곳)
+  SLOT.forEach((s,i)=>{ const a=ap(1+i); if(a<=0) return; g.save(); g.globalAlpha=cl(a); const cx=s.x+s.w/2, cy=s.y+s.h/2; g.translate(cx,cy); g.scale(lerp(.9,1,cl(a)),lerp(.9,1,cl(a))); g.translate(-cx,-cy);
+    shadow(30,12,.18); g.fillStyle='rgba(255,253,248,.55)'; rr(s.x,s.y,s.w,s.h,26); g.fill(); noShadow();
+    g.setLineDash([14,12]); g.lineWidth=4; g.strokeStyle='rgba(74,44,22,.35)'; rr(s.x+2,s.y+2,s.w-4,s.h-4,24); g.stroke(); g.setLineDash([]);
+    g.textAlign='center'; g.textBaseline='middle'; g.fillStyle='rgba(74,44,22,.55)'; g.font=`900 34px ${FONT}`; g.fillText(s.label,cx,cy-10);
+    g.font=`700 24px ${FONT}`; g.fillText(i===0&&NEXT?`${s.ko} · ${NEXT} ${NEXTROM}`:s.ko,cx,cy+32); g.restore(); });
+  // 구독 원 자리
+  const sa=ap(3); if(sa>0){ g.save(); g.globalAlpha=cl(sa); g.translate(SUB.x,SUB.y); g.scale(cl(sa),cl(sa)); shadow(30,12,.2); g.fillStyle='rgba(255,253,248,.6)'; g.beginPath(); g.arc(0,0,SUB.r,0,Math.PI*2); g.fill(); noShadow();
+    g.setLineDash([12,10]); g.lineWidth=4; g.strokeStyle='rgba(74,44,22,.35)'; g.beginPath(); g.arc(0,0,SUB.r-2,0,Math.PI*2); g.stroke(); g.setLineDash([]); g.restore(); }
+  // 4남매 (오른쪽 아래) — 누를 때마다 한 마리씩 뛴다
+  const CXS=[1300,1500,1690,1860], CHS=[330,320,340,325];
+  for(let i=0;i<4;i++){ const up=eOB(cl((t-.55-i*.08)/.35),1.7); if(up<=0) continue; const foot=lerp(H+CHS[i]+40,H+30,up);
+    const jt=[CLICK.sub,CLICK.like,CLICK.bell,4.0][i], j=t-jt; const hop=j>0&&j<.5?Math.sin(j/.5*Math.PI)*60:0; const idle=Math.sin((t+i*.4)*Math.PI*1.0)*.012;
+    cub(CUBS[i].id,CXS[i]-120,foot-hop,CHS[i]*1.3,1,1+idle,Math.sin(t*2+i)*.02,1); }
+  // 버튼 줄: SUBSCRIBE · 좋아요 · 알림
+  const ba=ap(4); if(ba>0){ g.save(); g.globalAlpha=cl(ba); g.translate(0,(1-cl(ba))*20);
+    // 구독 버튼
+    const sd=t-CLICK.sub, subbed=sd>0, press=sd>0&&sd<.18?1-Math.sin(sd/.18*Math.PI)*.08:1, bw=subbed?360:330;
+    g.save(); g.translate(BTN.sub.x,BTN.sub.y); g.scale(press*(1+(sd>0&&sd<.5?wobble(sd,4,8)*.06:0)),press);
+    shadow(20,8,.2); g.fillStyle=subbed?'#e9e2d6':'#e62117'; rr(-bw/2,-44,bw,88,44); g.fill(); noShadow();
+    g.textAlign='center'; g.textBaseline='middle'; g.font=`900 36px ${FONT}`; g.fillStyle=subbed?C.brown:'#fff';
+    if(subbed){ g.fillText('SUBSCRIBED',20,2); g.lineWidth=7; g.strokeStyle=C.brown; g.lineCap='round'; g.beginPath(); g.moveTo(-148,0); g.lineTo(-134,14); g.lineTo(-110,-12); g.stroke(); } else g.fillText('SUBSCRIBE',0,2);
+    g.restore(); clickRing(BTN.sub.x,BTN.sub.y,CLICK.sub,t);
+    // 좋아요
+    const ld=t-CLICK.like, liked=ld>0, lp=liked?1+wobble(ld,3.5,6)*.35:1;
+    g.save(); g.translate(BTN.like.x,BTN.like.y); shadow(20,8,.2); g.fillStyle=liked?C.ink:'#fffdf8'; g.beginPath(); g.arc(0,0,58,0,Math.PI*2); g.fill(); noShadow(); g.restore();
+    icon(THUMB,BTN.like.x,BTN.like.y-2,58*lp,liked?'#fff':C.ink,liked?wobble(ld,3,6)*-.4:0); clickRing(BTN.like.x,BTN.like.y,CLICK.like,t);
+    if(liked&&ld<.9){ g.save(); g.globalAlpha=1-cl(ld/.9); g.font=`900 34px ${FONT}`; g.textAlign='center'; g.fillStyle=C.ink; g.fillText('+1',BTN.like.x+40,BTN.like.y-70-ld*60); g.restore(); }
+    // 알림 종
+    const bd=t-CLICK.bell, rung=bd>0;
+    g.save(); g.translate(BTN.bell.x,BTN.bell.y); shadow(20,8,.2); g.fillStyle=rung?C.honey:'#fffdf8'; g.beginPath(); g.arc(0,0,58,0,Math.PI*2); g.fill(); noShadow(); g.restore();
+    icon(BELL,BTN.bell.x,BTN.bell.y-2,60,rung?'#fff':C.ink,rung?wobble(bd,5,3.5)*.5:0); clickRing(BTN.bell.x,BTN.bell.y,CLICK.bell,t);
+    if(rung&&bd<1.2){ g.save(); g.globalAlpha=1-cl(bd/1.2); g.strokeStyle=C.honey; g.lineWidth=6; g.lineCap='round'; for(const s of [-1,1]){ for(const k of [0,1]){ const r=78+k*22+bd*30; g.beginPath(); g.arc(BTN.bell.x,BTN.bell.y,r,s>0?-.5:Math.PI-.5+ .0,s>0?.5:Math.PI+.5); g.stroke(); } } g.restore(); }
+    // 라벨
+    g.font=`700 24px ${FONT}`; g.textAlign='center'; g.fillStyle=C.brown; g.fillText(liked?'Thanks!':'Like',BTN.like.x,BTN.like.y+95); g.fillText(rung?'On!':'Alerts',BTN.bell.x,BTN.bell.y+95);
+    g.restore(); }
+  // 손가락 커서: 구독 → 좋아요 → 종
+  const path=[[1.0,{x:560,y:1000}],[CLICK.sub-.12,BTN.sub],[CLICK.like-.12,BTN.like],[CLICK.bell-.12,BTN.bell],[3.9,{x:900,y:1000}]];
+  if(t>1.0&&t<3.95){ let p=path[path.length-1][1]; for(let i=0;i<path.length-1;i++){ const [t0,a]=path[i], [t1,b]=path[i+1]; if(t>=t0&&t<t1){ const e=eIOC(P(t,t0,t1-.1)); p={x:lerp(a.x,b.x,e)+22,y:lerp(a.y,b.y,e)+30}; break; } }
+    const press=[CLICK.sub,CLICK.like,CLICK.bell].some(c=>t>c-.1&&t<c+.08)?.86:1;
+    g.save(); g.globalAlpha=cl(P(t,1.0,1.2))*(1-P(t,3.7,3.95)); shadow(12,6,.35); icon(HAND,p.x,p.y+18,96*press,'#fff'); noShadow(); g.lineWidth=0; icon(HAND,p.x,p.y+18,90*press,C.ink); g.restore(); }
+  // 앱 알약
+  const pa=ap(6); if(pa>0){ g.save(); g.globalAlpha=cl(pa); const tx='Practice every letter in the free Hangeul Cubs app'; g.font=`700 26px ${FONT}`; const w=g.measureText(tx).width+120;
+    g.translate(110,960); shadow(18,8,.16); g.fillStyle='#fffdf8'; rr(0,-34,w,68,34); g.fill(); noShadow();
+    g.fillStyle=C.honey; g.beginPath(); g.arc(40,0,18,0,Math.PI*2); g.fill(); g.fillStyle='#fff'; g.font=`900 22px ${FONT}`; g.textAlign='center'; g.textBaseline='middle'; g.fillText('한',40,1);
+    g.fillStyle=C.ink; g.font=`700 26px ${FONT}`; g.textAlign='left'; g.fillText(tx,76,2); g.restore(); }
+  // 반짝임
+  if(t>3.3) for(let i=0;i<10;i++){ const st=3.3+i*.09, lt=t-st; if(lt<0) continue; star(1150+rnd(i+40)*700,160+rnd(i+60)*180,lerp(0,8+rnd(i+80)*14,eOB(cl(lt/.3))),Math.min(1,lt/.12)*(.5+.5*Math.sin(lt*6+i)),lt*1.4+i); }
+  const v=g.createRadialGradient(W/2,H/2,H*.45,W/2,H/2,H*1.05); v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(80,40,0,.14)'); g.fillStyle=v; g.fillRect(0,0,W,H);
+  const fo=P(t,DUR-.35,DUR); if(fo>0){ g.fillStyle=`rgba(0,0,0,${fo})`; g.fillRect(0,0,W,H); }
+}
+window.render=render;
+</script></body></html>

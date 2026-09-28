@@ -1,0 +1,63 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style></head>
+<body><canvas id="c" width="1920" height="1080"></canvas>
+<script src="lib.js"></script>
+<script>
+/* HANGEUL CUBS — 본편 오프닝 스팅 3.0초 (편마다 글자·번호만 바뀐다)
+   ?n=2&letter=ㅑ&rom=YA&series=FIRST%20STEPS&cub=kkobi
+   0.08–0.56  「한 글 컵 스」 타일 네 장이 0.16초 간격으로 떨어진다 (받침 꿀색)
+   0.55–0.90  4남매가 아래에서 고개를 내민다 · 0.75 HANGEUL CUBS
+   1.45–1.85  타일이 가운데로 모여 접힌다 → 1.80 이번 편 글자 타일이 튀어나온다 (LESSON 02 · YA)
+   2.55–3.00  타일 속으로 뚫고 들어가며 크림 화면 → 본편 첫 화면으로 이어진다 */
+const DUR=3.0;
+const N=+(Q.get('n')||1), LET=Q.get('letter')||'ㅏ', ROM=(Q.get('rom')||'AH').toUpperCase(), SERIES=(Q.get('series')||'FIRST STEPS').toUpperCase();
+const ACC_C=C[Q.get('cub')||'aari']||C.aari;
+const TT=[{ch:'한',c:C.daho},{ch:'글',c:C.kkobi},{ch:'컵',c:C.aari},{ch:'스',c:C.rami}];
+const TS=170, GAP=22, TY=440, X0=W/2-(4*TS+3*GAP)/2+TS/2, DROP=i=>.08+.16*i;
+const CX=[560,830,1095,1360], CH=[400,385,410,390];
+
+function bg(t){ let gr=g.createRadialGradient(W*.5,H*.42,80,W*.5,H*.5,W*.75); gr.addColorStop(0,C.cream); gr.addColorStop(1,C.cream2); g.fillStyle=gr; g.fillRect(0,0,W,H);
+  g.fillStyle='rgba(232,155,42,.10)'; const off=(t*30)%52; for(let yy=-52;yy<H+52;yy+=52) for(let xx=((yy/52|0)%2)*26;xx<W;xx+=52){ g.beginPath(); g.arc(xx,yy-off,3,0,Math.PI*2); g.fill(); } }
+
+function render(t){
+  g.setTransform(1,0,0,1,0,0); g.globalAlpha=1; noShadow(); bg(t);
+  const push=1+.03*eIOC(P(t,0,2.5)); let shx=0; for(let i=0;i<4;i++){ const d=t-DROP(i)-.18; if(d>0&&d<.18) shx+=Math.sin(d*110)*(1-d/.18)*2.2; }
+  g.setTransform(push,0,0,push,W/2*(1-push)+shx,H/2*(1-push));
+  const gather=P(t,1.45,1.85), eg=eIB(gather,1.2);
+  // 4남매 고개 내밀기
+  for(let i=0;i<4;i++){ const st=.55+i*.06, up=eOB(cl((t-st)/.3),1.8)*(1-eIC(P(t,1.65,1.95))); if(up<=0) continue;
+    const foot=lerp(H+CH[i]*1.25+40,H+150,up); cub(CUBS[i].id,CX[i],foot,CH[i]*1.25,1,1,Math.sin(t*3+i)*.03,1); }
+  // 타일 네 장
+  if(t<1.95) for(let i=0;i<4;i++){ const lt=t-DROP(i); if(lt<-.18) continue;
+    const fall=eIQ(cl((lt+.18)/.18)); let x=X0+i*(TS+GAP), y=lerp(-140,TY,fall), sx=1, sy=1, rot=lerp(.3*(i%2?1:-1),0,fall);
+    if(lt>0){ const w=wobble(lt,4.5,7.5); sy-=w*.14; sx+=w*.1; }
+    if(gather>0){ x=lerp(x,W/2,eg); y=lerp(y,TY+20,eg); rot+=eg*(i-1.5)*.35; sx*=lerp(1,.55,eg); sy*=lerp(1,.55,eg); }
+    g.save(); g.globalAlpha=1-P(t,1.78,1.9); tile(x,y,{size:TS,ch:TT[i].ch,border:TT[i].c,jongColor:C.honey,sx,sy,rot}); g.restore();
+    if(lt>0&&lt<.3){ const p=lt/.3; g.save(); g.globalAlpha=(1-p)*.6; g.lineWidth=5; g.strokeStyle='#fff'; g.beginPath(); g.ellipse(x,TY+TS/2+4,lerp(30,120,eOC(p)),lerp(6,20,eOC(p)),0,0,Math.PI*2); g.stroke(); g.restore(); } }
+  // 워드마크
+  const wm=P(t,.75,1.15), wo=P(t,1.35,1.55); if(wm>0&&wo<1){ const e=eOQ(wm), text='HANGEUL CUBS', fs=46, tr=lerp(40,14,e);
+    g.save(); g.globalAlpha=cl(wm*1.8)*(1-wo); g.font=`900 ${fs}px ${FONT}`; g.textBaseline='middle'; g.fillStyle=C.ink;
+    let ws=[...text].map(ch=>g.measureText(ch).width), sum=ws.reduce((a,b)=>a+b,0)+tr*(text.length-1), x=W/2-sum/2; const y=TY+TS/2+62+(1-e)*14;
+    [...text].forEach((ch,k)=>{ g.fillText(ch,x,y); x+=ws[k]+tr; }); g.restore(); }
+  // 이번 편 글자 타일
+  const bt=t-1.80; if(bt>0){ const s=380, sp=spring(bt,2.6,6.5), zoom=eIC(P(t,2.55,3.0)), sc=sp*(1+zoom*9);
+    g.save(); g.translate(W/2,TY+20); g.scale(sc,sc); g.rotate((1-cl(bt/.35))*-.2);
+    shadow(40,16,.22*(1-zoom)); g.fillStyle=C.white; rr(-s/2,-s/2,s,s,s*.2); g.fill(); noShadow();
+    g.lineWidth=12; g.strokeStyle=ACC_C; g.globalAlpha=1-zoom; rr(-s/2+6,-s/2+6,s-12,s-12,s*.2-6); g.stroke();
+    g.font=`900 ${Math.round(s*.62)}px ${FONT}`; g.textAlign='center'; g.textBaseline='middle'; g.fillStyle=ACC_C; g.fillText(LET,0,s*.03); g.globalAlpha=1; g.restore();
+    // 라벨: LESSON 02 / 로마자
+    const la=cl(P(t,1.95,2.2))*(1-P(t,2.5,2.62)); if(la>0){ g.save(); g.globalAlpha=la;
+      g.font=`900 30px ${FONT}`; g.textAlign='center'; g.textBaseline='middle'; g.fillStyle=C.brown;
+      g.fillText(`${SERIES} · LESSON ${String(N).padStart(2,'0')}`,W/2,TY+20-s/2-54+(1-eOC(P(t,1.95,2.2)))*12);
+      g.font=`900 56px ${FONT}`; g.fillStyle=ACC_C; g.fillText(ROM,W/2,TY+20+s/2+62-(1-eOC(P(t,2.02,2.28)))*12); g.restore(); }
+    // 반짝임
+    if(bt<.8) for(let i=0;i<10;i++){ const an=i/10*Math.PI*2+.3, r=lerp(210,330,eOC(cl(bt/.5))); star(W/2+Math.cos(an)*r,TY+20+Math.sin(an)*r*.8,lerp(14,0,cl(bt/.8)),cl(1-bt/.8),bt*4+i); }
+  }
+  g.setTransform(1,0,0,1,0,0);
+  const v=g.createRadialGradient(W/2,H/2,H*.45,W/2,H/2,H*1.05); v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(80,40,0,.14)'); g.fillStyle=v; g.fillRect(0,0,W,H);
+  // 끝: 크림으로 덮여 본편 첫 화면과 이어진다
+  const endc=P(t,2.82,3.0); if(endc>0){ g.fillStyle=`rgba(253,246,234,${eOC(endc)})`; g.fillRect(0,0,W,H); }
+  if(t<.08){ g.fillStyle=`rgba(255,247,234,${1-t/.08})`; g.fillRect(0,0,W,H); }
+}
+window.render=render;
+</script></body></html>

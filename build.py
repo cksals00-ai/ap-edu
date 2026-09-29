@@ -2,7 +2,7 @@
 """AP Edu — Hangeul Cubs 사이트 빌더. python3 build.py → 정적 파일 (GitHub Pages, edu.apholdings.kr)."""
 import os, html
 from content import CUBS, UNITS, LESSONS, EPISODES, EVENT, CHALLENGE, NEWS, STORE, YT, APP_ID
-OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '4'
+OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '5'
 e = html.escape
 T = {
  'ko': dict(lang='ko', other='en', otherLabel='EN',

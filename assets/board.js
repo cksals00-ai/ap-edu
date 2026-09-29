@@ -3,7 +3,7 @@
    글 본문은 textContent 로만 넣는다(HTML 주입 없음). */
 (function () {
   var root = document.getElementById('board'); if (!root) return;
-  var L = root.dataset.lang === 'en' ? 'en' : 'ko';
+  var L = ['ko', 'en', 'vi', 'fr'].indexOf(root.dataset.lang) >= 0 ? root.dataset.lang : 'en';
   var cfg = window.BOARD_CFG || {};
   var GAME = cfg.game || 'hangeulcubs';
   var S = {
@@ -26,7 +26,27 @@
       noticeOnly: 'Only moderators can post news.', back: 'Back to list', confirmDel: 'Delete this?', notReady: 'The board opens soon.',
       status: { open: 'Open', checking: 'Checking', fixed: 'Fixed', wontfix: 'On hold' }, pin: 'Pin', unpin: 'Unpin', hide: 'Hide', unhide: 'Unhide',
       admin: 'Mod', ago: function (m) { return m < 1 ? 'just now' : m < 60 ? m + 'm ago' : m < 1440 ? Math.floor(m / 60) + 'h ago' : Math.floor(m / 1440) + 'd ago'; },
-      rules: 'Abuse, harassment, spam, personal data or copyright violations are hidden without notice; repeat offenders are restricted.' }
+      rules: 'Abuse, harassment, spam, personal data or copyright violations are hidden without notice; repeat offenders are restricted.' },
+    vi: { cats: { notice: 'Thông báo', free: 'Chung & hỏi đáp', fanart: 'Cảm nhận & tranh vẽ', bug: 'Lỗi & góp ý' },
+      all: 'Tất cả', write: 'Viết bài', login: 'Đăng nhập', logout: 'Đăng xuất', google: 'Tiếp tục với Google', apple: 'Tiếp tục với Apple',
+      loginNeed: 'Đăng nhập để viết bài.', title: 'Tiêu đề', body: 'Nội dung', images: 'Ảnh (tối đa 4 ảnh, mỗi ảnh 5 MB)', submit: 'Đăng', save: 'Lưu',
+      cancel: 'Hủy', del: 'Xóa', edit: 'Sửa', report: 'Báo cáo', reported: 'Đã báo cáo. Người quản lý sẽ xem xét.', comment: 'Bình luận', commentPh: 'Viết bình luận',
+      like: 'Thích', empty: 'Chưa có bài nào. Hãy là người đầu tiên.', more: 'Xem thêm', nick: 'Biệt danh', nickPh: '2–16 ký tự',
+      nickNeed: 'Chào bạn! Hãy chọn một biệt danh cho bảng tin.', nickTaken: 'Biệt danh này đã có người dùng.', banned: 'Tài khoản này đã bị hạn chế.',
+      noticeOnly: 'Chỉ người quản lý mới đăng được thông báo.', back: 'Về danh sách', confirmDel: 'Xóa bài này?', notReady: 'Bảng tin sắp mở.',
+      status: { open: 'Đã nhận', checking: 'Đang kiểm tra', fixed: 'Đã sửa', wontfix: 'Tạm hoãn' }, pin: 'Ghim', unpin: 'Bỏ ghim', hide: 'Ẩn', unhide: 'Bỏ ẩn',
+      admin: 'Quản lý', ago: function (m) { return m < 1 ? 'vừa xong' : m < 60 ? m + ' phút trước' : m < 1440 ? Math.floor(m / 60) + ' giờ trước' : Math.floor(m / 1440) + ' ngày trước'; },
+      rules: 'Bài có nội dung xúc phạm, quấy rối, spam, thông tin cá nhân hoặc vi phạm bản quyền sẽ bị ẩn mà không báo trước; vi phạm nhiều lần sẽ bị hạn chế.' },
+    fr: { cats: { notice: 'Annonces', free: 'Discussion & questions', fanart: 'Avis & fan art', bug: 'Bugs & idées' },
+      all: 'Tout', write: 'Nouveau message', login: 'Se connecter', logout: 'Se déconnecter', google: 'Continuer avec Google', apple: 'Continuer avec Apple',
+      loginNeed: 'Connectez-vous pour publier.', title: 'Titre', body: 'Message', images: 'Images (4 max, 5 Mo chacune)', submit: 'Publier', save: 'Enregistrer',
+      cancel: 'Annuler', del: 'Supprimer', edit: 'Modifier', report: 'Signaler', reported: 'Signalé. Un modérateur va vérifier.', comment: 'Commentaires', commentPh: 'Écrire un commentaire',
+      like: 'J’aime', empty: 'Aucun message pour l’instant. Soyez le premier.', more: 'Voir plus', nick: 'Pseudo', nickPh: '2 à 16 caractères',
+      nickNeed: 'Bienvenue ! Choisissez un pseudo pour le forum.', nickTaken: 'Ce pseudo est déjà pris.', banned: 'Ce compte est restreint.',
+      noticeOnly: 'Seuls les modérateurs peuvent publier des annonces.', back: 'Retour à la liste', confirmDel: 'Supprimer ce message ?', notReady: 'Le forum ouvre bientôt.',
+      status: { open: 'Reçu', checking: 'En cours', fixed: 'Corrigé', wontfix: 'En attente' }, pin: 'Épingler', unpin: 'Désépingler', hide: 'Masquer', unhide: 'Afficher',
+      admin: 'Modo', ago: function (m) { return m < 1 ? 'à l’instant' : m < 60 ? 'il y a ' + m + ' min' : m < 1440 ? 'il y a ' + Math.floor(m / 60) + ' h' : 'il y a ' + Math.floor(m / 1440) + ' j'; },
+      rules: 'Insultes, harcèlement, spam, données personnelles ou atteintes au droit d’auteur sont masqués sans préavis ; les récidivistes sont restreints.' }
   }[L];
   var CATS = ['notice', 'free', 'fanart', 'bug'], PAGE = 20;
   var PROV = cfg.providers || ['google', 'apple'];

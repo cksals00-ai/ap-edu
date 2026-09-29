@@ -2,7 +2,7 @@
 """AP Edu — Hangeul Cubs 사이트 빌더. python3 build.py → 정적 파일 (GitHub Pages, edu.apholdings.kr)."""
 import os, html
 from content import CUBS, UNITS, LESSONS, EPISODES, EVENT, CHALLENGE, NEWS, STORE, YT, APP_ID
-OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '5'
+OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '6'
 e = html.escape
 T = {
  'ko': dict(lang='ko', other='en', otherLabel='EN',
@@ -39,25 +39,32 @@ T = {
  ),
 }
 
+LANGS = ('ko', 'en', 'vi', 'fr')
 from challenge_i18n import T_EXTRA
 T.update(T_EXTRA)
 
 def shell(l, title, desc, path, body, og=None, extra_head=''):
-    t = T[l]; alt = f'/{t["other"]}{path[3:]}'
+    t = T[l]; rest = path[3:]
+    alts = ''.join(f'<link rel="alternate" hreflang="{k}" href="{ORIGIN}/%%{k}%%{rest}">' for k in LANGS)
+    langsw = '<div class="langs-top" role="navigation" aria-label="Language">' + ''.join(f'<a href="/%%{k}%%{rest}" hreflang="{k}" data-sw="{k}">{k.upper()}</a>' for k in LANGS) + '</div>'
     nav = ''.join(f'<a href="{h}"{" class=on" if path == h or (h != f"/{l}/" and path.startswith(h)) else ""}>{e(n)}</a>' for h, n in t['nav'])
     og = og or '/assets/art/family.jpg'
     return f'''<!doctype html><html lang="{l}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{e(title)}</title>
-<meta name="description" content="{e(desc, True)}"><link rel="canonical" href="{ORIGIN}{path}"><link rel="alternate" hreflang="{t['other']}" href="{ORIGIN}{alt}">
+<meta name="description" content="{e(desc, True)}"><link rel="canonical" href="{ORIGIN}{path}">{alts}
 <meta property="og:title" content="{e(title, True)}"><meta property="og:description" content="{e(desc, True)}"><meta property="og:image" content="{ORIGIN}{og}"><meta property="og:url" content="{ORIGIN}{path}"><meta name="theme-color" content="#fff7ea">
 <link rel="icon" href="/assets/ap_edu_mark.svg"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css?v={V}">{extra_head}</head><body>
-<header class="top"><a class="brand" href="/{l}/"><img src="/assets/ap_edu_wordmark.svg" alt="AP Edu" height="22"><img class="gicon" src="/assets/cubs_icon64.png" width="22" height="22" alt=""><span class="game">HANGEUL CUBS</span></a><nav>{nav}</nav><a class="lang" href="{alt}">{t['otherLabel']}</a></header>
+<header class="top"><a class="brand" href="/{l}/"><img src="/assets/ap_edu_wordmark.svg" alt="AP Edu" height="22"><img class="gicon" src="/assets/cubs_icon64.png" width="22" height="22" alt=""><span class="game">HANGEUL CUBS</span></a><nav>{nav}</nav>{langsw}</header>
 <main>{body}</main>
 <footer><div class="wrap"><div class="fgrid"><div><img src="/assets/ap_edu_wordmark.svg" alt="AP Edu" height="20"><p>{e(t['studio'])}</p></div>
 <div><a href="{STORE.get(l, STORE['en'])}" target="_blank" rel="noopener">{e(t['store'])}</a> · <a href="{YT}" target="_blank" rel="noopener">{e(t['ytch'])}</a><br><a href="https://www.apholdings.kr/{l if l in ('ko', 'en') else 'en'}/">{e(t['company'])} — apholdings.kr</a> · <a href="https://www.apholdings.kr/hangeulcubs_privacy.html">{e(t['privacy'])}</a></div></div><p class="fine">{e(t['footer_note'])}</p></div></footer>
 <script src="/assets/site.js?v={V}" defer></script></body></html>'''
 
 def out(path, text):
+    import re as _re
+    m = _re.match(r'/(ko|en|vi|fr)/', path); cur = m.group(1) if m else None
+    text = _re.sub(r'/%%(ko|en|vi|fr)%%', lambda mm: '/' + mm.group(1), text)
+    if cur: text = text.replace(f'data-sw="{cur}"', f'data-sw="{cur}" class=on aria-current="page"')
     p = os.path.join(OUT, path.lstrip('/')); os.makedirs(os.path.dirname(p), exist_ok=True); open(p, 'w', encoding='utf-8').write(text)
 
 def cub_card(l, c, big=False):
@@ -81,7 +88,7 @@ def lesson_rows(l, host=None, unit=None):
 CH_LANGS = [('ko', 'KO'), ('en', 'EN'), ('vi', 'VI'), ('fr', 'FR')]
 def build_challenge(l, d, eh):
     C = CHALLENGE; ca0, ca1 = C['apply']; h = d['h']; fx = d['fx']
-    tl = l if l in ('ko', 'en') else 'en'  # 체험단·게시판은 한/영만
+    tl = l
     sw = f'<div class="ev-switch"><a href="/{tl}/event/">{e(h["tester"])}</a><a href="/{l}/event/challenge/" class=on>{e(h["ch"])}</a></div>'
     langs = '<nav class="ev-langs" aria-label="Language">' + ''.join(f'<a href="/{k}/event/challenge/" hreflang="{k}"{" class=on" if k == l else ""}>{n}</a>' for k, n in CH_LANGS) + '</nav>'
     steps_h = ''.join(f'<li><b>{e(a)}</b><time>{e(b)}</time><p>{e(c_)}</p></li>' for a, b, c_ in d['steps'])
@@ -100,7 +107,7 @@ def build_challenge(l, d, eh):
 <label class="full">{e(fx['note'])}<textarea name="note" maxlength="600" rows="3"></textarea></label>
 <label class="full check"><input type="checkbox" name="consent" required> <span>{e(fx['consent'])}</span></label>
 <div class="full actions"><button class="btn" type="submit" data-soon="{e(d['soon'], True)}">{e(fx['submit'])}</button><p class="form-msg" role="status"></p></div></form>'''
-    body = f'''<section class="page event challenge"><div class="wrap"><div class="ev-top">{sw}{langs}</div><span class="eyebrow">{e(h['eyebrow'])}</span><h1>{e(d['title'])}</h1><p class="lead">{e(d['lead'])}</p>
+    body = f'''<section class="page event challenge"><div class="wrap"><div class="ev-top">{sw}</div><span class="eyebrow">{e(h['eyebrow'])}</span><h1>{e(d['title'])}</h1><p class="lead">{e(d['lead'])}</p>
 <figure class="wide prize-fig"><picture><source media="(max-width:640px)" srcset="/assets/art/challenge_sq_{l}.jpg"><img src="/assets/art/challenge_kv_{l}.jpg" alt="{e(h['page'], True)}" width="1600" height="900"></picture></figure>
 <ol class="steps">{steps_h}</ol>
 <div class="sh"><h2>{e(h['do'])}</h2><p>{e(h['doNote'])}</p></div><ul class="plain two-col">{do_h}</ul>
@@ -249,7 +256,7 @@ for l in ('ko', 'en'):
     bt = '게시판' if l == 'ko' else 'Community'
     bl = '공지 · 자유·질문 · 후기·팬아트 · 오류·건의' if l == 'ko' else 'Notices · General & questions · Reviews & fan art · Bugs & ideas'
     body = f'<section class="page board-page"><div class="wrap"><span class="eyebrow">HANGEUL CUBS</span><h1>{e(bt)}</h1><p class="lead">{e(bl)}</p><div id="board" data-lang="{l}"><p class="b-msg">…</p></div></div></section>'
-    bh = '<script src="/assets/board-config.js?v=1"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script><script src="/assets/board.js?v=1" defer></script>'
+    bh = '<script src="/assets/board-config.js?v=1"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script><script src="/assets/board.js?v=2" defer></script>'
     out(f'/{l}/board/index.html', shell(l, f'{bt} — Hangeul Cubs', bl, f'/{l}/board/', body, extra_head=bh))
 
     # NEWS
@@ -257,14 +264,53 @@ for l in ('ko', 'en'):
     body = f'<section class="page"><div class="wrap"><span class="eyebrow">HANGEUL CUBS</span><h1>{e(t["news"])}</h1><div class="ngrid list">{items}</div></div></section>'
     out(f'/{l}/news/index.html', shell(l, f'{t["news"]} — Hangeul Cubs', 'AP Edu news', f'/{l}/news/', body))
 
+# ── 베트남어·프랑스어: 영어 페이지의 글자만 번역 사전(site_i18n_vi/fr)으로 바꿔 만든다. 사전에 없는 문장은 영어로 남는다 ──
+import glob as _glob, re as _re, html as _html
+from site_i18n_vi import VI
+from site_i18n_fr import FR
+_ATTRS = r'(alt|placeholder|title|content|aria-label|data-ok|data-err|data-many|data-soon)="([^"]*)"'
+def _overlay(src, lang, D):
+    miss = set()
+    def tx(m):
+        raw = m.group(1); key = _html.unescape(raw.strip())
+        if not key or not _re.search('[A-Za-z]{2}', key): return m.group(0)
+        if key in D:
+            lead = raw[:len(raw) - len(raw.lstrip())]; trail = raw[len(raw.rstrip()):]
+            return '>' + lead + _html.escape(D[key], quote=False) + trail + '<'
+        miss.add(key); return m.group(0)
+    def at(m):
+        key = _html.unescape(m.group(2).strip())
+        return f'{m.group(1)}="{_html.escape(D[key], quote=True)}"' if key in D else m.group(0)
+    parts = _re.split(r'(<script\b.*?</script>|<style\b.*?</style>)', src, flags=_re.S)
+    for i in range(0, len(parts), 2):
+        seg = _re.sub(r'>([^<>]+)<', tx, parts[i]); parts[i] = _re.sub(_ATTRS, at, seg)
+    s2 = ''.join(parts)
+    s2 = s2.replace('<html lang="en">', f'<html lang="{lang}">').replace('data-lang="en"', f'data-lang="{lang}"')
+    s2 = _re.sub(r'href="/en/([^"]*)"(?! hreflang="en" data-sw)', lambda m: f'href="/{lang}/{m.group(1)}"', s2)
+    s2 = _re.sub(r'(<link rel="canonical" href="|<meta property="og:url" content=")' + _re.escape(ORIGIN) + '/en/', lambda m: m.group(1) + ORIGIN + f'/{lang}/', s2)
+    s2 = s2.replace('data-sw="en" class=on aria-current="page"', 'data-sw="en"').replace(f'data-sw="{lang}"', f'data-sw="{lang}" class=on aria-current="page"')
+    return s2, miss
+_missing = {}
+for _f in sorted(_glob.glob(os.path.join(OUT, 'en', '**', 'index.html'), recursive=True)):
+    _rel = os.path.relpath(_f, os.path.join(OUT, 'en'))
+    if _rel.startswith('event/challenge'): continue
+    _src = open(_f, encoding='utf-8').read()
+    for _lang, _D in (('vi', VI), ('fr', FR)):
+        _html_out, _miss = _overlay(_src, _lang, _D)
+        _dst = os.path.join(OUT, _lang, _rel); os.makedirs(os.path.dirname(_dst), exist_ok=True); open(_dst, 'w', encoding='utf-8').write(_html_out)
+        for _k in _miss: _missing.setdefault(_lang, set()).add(_k)
+for _lang, _ks in _missing.items():
+    _ks = sorted(k for k in _ks if k not in ('AP Edu', 'HANGEUL CUBS', 'KO', 'EN', 'VI', 'FR'))
+    if _ks: print(f'[{_lang}] 번역 없음 {len(_ks)}:', ' | '.join(_ks[:40]))
+
 from challenge_i18n import CH_I18N
 for l, d in CH_I18N.items():
     build_challenge(l, d, '<script src="/assets/event-config.js?v=1"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script><script src="/assets/event.js?v=2" defer></script>')
 
-out('/index.html', '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/ko/"><link rel="canonical" href="https://edu.apholdings.kr/ko/"><script>location.replace((navigator.language||"").toLowerCase().startsWith("ko")?"/ko/":"/en/")</script></head><body></body></html>')
+out('/index.html', '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/ko/"><link rel="canonical" href="https://edu.apholdings.kr/ko/"><script>(function(){var l=(navigator.language||"").toLowerCase().slice(0,2);location.replace("/"+(["ko","vi","fr"].indexOf(l)>=0?l:"en")+"/")})()</script></head><body></body></html>')
 out('/404.html', '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/ko/"></head><body></body></html>')
 out('/CNAME', 'edu.apholdings.kr'); out('/.nojekyll', '')
-urls = [f'/{l}/{s}' for l in ('ko', 'en') for s in ['', 'cubs/', 'episodes/', 'app/', 'event/', 'event/challenge/', 'board/', 'news/'] + [f'cubs/{c["id"]}/' for c in CUBS]] + ['/vi/event/challenge/', '/fr/event/challenge/']
+urls = [f'/{l}/{s}' for l in LANGS for s in ['', 'cubs/', 'episodes/', 'app/', 'event/', 'event/challenge/', 'board/', 'news/'] + [f'cubs/{c["id"]}/' for c in CUBS]]
 out('/sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(f'<url><loc>{ORIGIN}{u}</loc></url>' for u in urls) + '</urlset>')
 out('/robots.txt', f'User-agent: *\nAllow: /\nSitemap: {ORIGIN}/sitemap.xml\n')
 print('built', len(urls), 'pages')

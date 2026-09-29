@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""30일 챌린지 — 베트남어·프랑스어 페이지 (앱 힌트 언어와 같음). 체험단·게시판·나머지 페이지는 한/영만 있어 영어로 연결."""
+"""30일 챌린지 — 베트남어·프랑스어 페이지. (9/29부터 나머지 페이지도 vi·fr — site_i18n_vi/fr 로 번역)"""
 from content import CHALLENGE as C
 
 dm = lambda d: f'{int(d[8:])}/{int(d[5:7])}'
@@ -10,11 +10,11 @@ DEV = lambda both: [('iphone', 'iPhone'), ('ipad', 'iPad'), ('both', both)]
 # 셸(머리글·바닥글)용 — 메뉴는 영어 페이지로 연결
 T_EXTRA = {
  'vi': dict(lang='vi', other='en', otherLabel='EN',
-   nav=[('/en/', 'Trang chủ'), ('/en/cubs/', 'Bốn chú hổ'), ('/en/episodes/', 'Tập phim'), ('/en/app/', 'Ứng dụng'), ('/vi/event/challenge/', 'Sự kiện'), ('/en/board/', 'Bảng tin'), ('/en/news/', 'Tin tức')],
+   nav=[('/vi/', 'Trang chủ'), ('/vi/cubs/', 'Bốn chú hổ'), ('/vi/episodes/', 'Tập phim'), ('/vi/app/', 'Ứng dụng'), ('/vi/event/', 'Sự kiện'), ('/vi/board/', 'Bảng tin'), ('/vi/news/', 'Tin tức')],
    store='App Store', ytch='Kênh YouTube', privacy='Chính sách quyền riêng tư', company='Công ty',
    studio='AP Edu là thương hiệu giáo dục của A.P Holdings.', footer_note='Hangeul Cubs © 2026 AP Edu / A.P Holdings. Nhân vật, hình ảnh và nội dung thuộc về AP Edu. Hình minh họa được tạo bằng công cụ AI.'),
  'fr': dict(lang='fr', other='en', otherLabel='EN',
-   nav=[('/en/', 'Accueil'), ('/en/cubs/', 'Les tigres'), ('/en/episodes/', 'Épisodes'), ('/en/app/', 'L’app'), ('/fr/event/challenge/', 'Événements'), ('/en/board/', 'Forum'), ('/en/news/', 'Actus')],
+   nav=[('/fr/', 'Accueil'), ('/fr/cubs/', 'Les tigres'), ('/fr/episodes/', 'Épisodes'), ('/fr/app/', 'L’app'), ('/fr/event/', 'Événements'), ('/fr/board/', 'Forum'), ('/fr/news/', 'Actus')],
    store='App Store', ytch='Chaîne YouTube', privacy='Confidentialité', company='Société',
    studio='AP Edu est le label éducatif d’A.P Holdings.', footer_note='Hangeul Cubs © 2026 AP Edu / A.P Holdings. Personnages, illustrations et contenus appartiennent à AP Edu. Illustrations réalisées avec des outils d’IA.'),
 }
@@ -52,7 +52,7 @@ CH_I18N = {
           consent='Tôi đã đọc thể lệ và đồng ý để thông tin của mình chỉ được dùng cho sự kiện, và bài cảm nhận có thể được trích dẫn.',
           submit='Đăng ký thử thách', ok='Đã nhận! Chúng tôi sẽ gửi email hướng dẫn vào ngày 1/11.', err='Chưa gửi được. Vui lòng thử lại sau ít phút.', many='Email này đã đăng ký rồi.'),
   h=dict(eyebrow='Thử thách 30 ngày · Tháng 11', do='Cần làm gì', doNote='Cần có cả cảm nhận trên bảng tin và bài đăng trên trang của bạn mới được chấm.', score='Chấm điểm · 100 điểm', scoreNote='Chấm điểm, không bốc thăm. Chỉ ba tiêu chí này.',
-         prize='Giải thưởng', rules='Thể lệ chính thức', apply='Đăng ký', tester='Thử nghiệm · Tháng 10 (EN)', ch='Thử thách 30 ngày · Tháng 11', page='Thử thách 30 ngày — Kính Meta AI | Hangeul Cubs')),
+         prize='Giải thưởng', rules='Thể lệ chính thức', apply='Đăng ký', tester='Dùng thử · Tháng 10', ch='Thử thách 30 ngày · Tháng 11', page='Thử thách 30 ngày — Kính Meta AI | Hangeul Cubs')),
  'fr': dict(
   title='30 jours de coréen avec les bébés tigres. Des lunettes Meta AI à gagner.',
   lead='Apprenez avec l’app et les vidéos tout au long de novembre, publiez votre avis sur notre forum et sur votre propre réseau social — un participant, choisi par un jury, recevra des lunettes Ray-Ban Meta AI. Ouvert à tous les pays.',
@@ -85,5 +85,5 @@ CH_I18N = {
           consent='J’ai lu le règlement et j’accepte que mes données servent uniquement à l’organisation du jeu et que mon avis puisse être cité.',
           submit='S’inscrire au défi', ok='C’est noté ! Nous vous écrirons le 1er novembre pour le lancement.', err='Envoi impossible. Réessayez dans un instant.', many='Cet e-mail est déjà inscrit.'),
   h=dict(eyebrow='Défi 30 jours · Novembre', do='À faire', doNote='L’avis sur le forum et la publication sur votre réseau sont tous deux requis pour être évalué.', score='Évaluation · 100 points', scoreNote='Sur jury, pas par tirage au sort. Ces trois critères seulement.',
-         prize='Lots', rules='Règlement officiel', apply='Inscription', tester='Testeurs · Octobre (EN)', ch='Défi 30 jours · Novembre', page='Défi 30 jours — Lunettes Meta AI | Hangeul Cubs')),
+         prize='Lots', rules='Règlement officiel', apply='Inscription', tester='Testeurs · Octobre', ch='Défi 30 jours · Novembre', page='Défi 30 jours — Lunettes Meta AI | Hangeul Cubs')),
 }

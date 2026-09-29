@@ -2,7 +2,7 @@
 """AP Edu — Hangeul Cubs 사이트 빌더. python3 build.py → 정적 파일 (GitHub Pages, edu.apholdings.kr)."""
 import os, html
 from content import CUBS, UNITS, LESSONS, EPISODES, EVENT, CHALLENGE, NEWS, STORE, YT, APP_ID
-OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '6'
+OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '7'
 e = html.escape
 T = {
  'ko': dict(lang='ko', other='en', otherLabel='EN',
@@ -54,9 +54,9 @@ def shell(l, title, desc, path, body, og=None, extra_head=''):
 <meta property="og:title" content="{e(title, True)}"><meta property="og:description" content="{e(desc, True)}"><meta property="og:image" content="{ORIGIN}{og}"><meta property="og:url" content="{ORIGIN}{path}"><meta name="theme-color" content="#fff7ea">
 <link rel="icon" href="/assets/ap_edu_mark.svg"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/site.css?v={V}">{extra_head}</head><body>
-<header class="top"><a class="brand" href="/{l}/"><img src="/assets/ap_edu_wordmark.svg" alt="AP Edu" height="22"><img class="gicon" src="/assets/cubs_icon64.png" width="22" height="22" alt=""><span class="game">HANGEUL CUBS</span></a><nav>{nav}</nav>{langsw}</header>
+<header class="top"><a class="brand" href="/{l}/"><img src="/assets/ap_edu_wordmark.svg" alt="AP Edu" width="105" height="22"><img class="gicon" src="/assets/cubs_icon64.png" width="22" height="22" alt=""><span class="game">HANGEUL CUBS</span></a><nav>{nav}</nav>{langsw}</header>
 <main>{body}</main>
-<footer><div class="wrap"><div class="fgrid"><div><img src="/assets/ap_edu_wordmark.svg" alt="AP Edu" height="20"><p>{e(t['studio'])}</p></div>
+<footer><div class="wrap"><div class="fgrid"><div><img src="/assets/ap_edu_wordmark.svg" alt="AP Edu" width="95" height="20"><p>{e(t['studio'])}</p></div>
 <div><a href="{STORE.get(l, STORE['en'])}" target="_blank" rel="noopener">{e(t['store'])}</a> · <a href="{YT}" target="_blank" rel="noopener">{e(t['ytch'])}</a><br><a href="https://www.apholdings.kr/{l if l in ('ko', 'en') else 'en'}/">{e(t['company'])} — apholdings.kr</a> · <a href="https://www.apholdings.kr/hangeulcubs_privacy.html">{e(t['privacy'])}</a></div></div><p class="fine">{e(t['footer_note'])}</p></div></footer>
 <script src="/assets/site.js?v={V}" defer></script></body></html>'''
 

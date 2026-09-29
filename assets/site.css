@@ -142,3 +142,5 @@ footer{border-top:1px solid var(--line);padding:46px 0 40px;color:var(--muted);f
 .langs-top{display:inline-flex;gap:2px;border:1px solid var(--line);border-radius:999px;padding:3px;flex-shrink:0;background:#fffdf8}.langs-top a{padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--muted)}.langs-top a.on{background:var(--ink);color:#fff}
 @media(max-width:1000px){.top{flex-wrap:wrap;row-gap:6px}.top .langs-top{margin-left:auto}.top nav{order:3;flex-basis:100%;margin-left:0;padding-bottom:2px}}
 @media(max-width:640px){.langs-top a{padding:4px 7px;font-size:11px}}
+/* (9/29) iOS Safari: 워드마크 SVG에 고유 폭이 없어 모바일 머리글에서 로고가 0폭으로 사라졌다 — 폭을 명시하고 줄어들지 않게 */
+.brand img{flex-shrink:0;height:22px;width:auto}

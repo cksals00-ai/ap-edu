@@ -85,7 +85,7 @@ def sting(path):
     out(path,fade_out=.12)
 
 # ── 엔드카드 12초 ──
-def outro(path,vdir):
+def outro(path,vdir,kids=False):
     new(12.0)
     add(noise_sweep(.55,400,6000),0.0,.3)
     for i,n in enumerate(('C5','E5','G5','C6')): add(boing(f(NT[n])),.55+i*.08,.2,.3+.15*i)
@@ -96,11 +96,12 @@ def outro(path,vdir):
         if k%4==0: add(pluck(f(NT[ch[0]])/2,.9),t,.15*fd)
     for k in range(88):
         t=.5+k*.125; fd=min(1,(t-.5)/.5)*(1 if t<10.5 else max(0,(12-t)/1.5)); add(shaker(),t,(.07 if k%2 else .04)*fd,.4)
-    for c,n in ((1.55,'C6'),(2.45,'E6'),(3.25,'G6')): add(pop(f(NT[n])*.5),c,.5); add(bell(f(NT[n]),.9,.25),c,.22)
+    if not kids:
+        for c,n in ((1.55,'C6'),(2.45,'E6'),(3.25,'G6')): add(pop(f(NT[n])*.5),c,.5); add(bell(f(NT[n]),.9,.25),c,.22)
     for k in range(6): add(bell(f(NT['C7'])*[1,1.125,1.25,1.5,1.33][k%5],.5,.12),3.3+k*.09,.05,rng.uniform(-.7,.7))
-    for v,t in (('v1',1.1),('v2',2.0),('v3',2.85),('v4',4.1)):
+    for v,t in ((('v4',1.4),) if kids else (('v1',1.1),('v2',2.0),('v3',2.85),('v4',4.1))):
         x=pitch(wav(f'{vdir}/{v}.wav'),2.5); add(x,t,.9)
     out(path,fade_out=.35)
 
 if __name__=='__main__':
-    sting('sting.wav'); outro('outro.wav','voices'); print('ok')
+    sting('sting.wav'); outro('outro.wav','voices'); outro('outro_kids.wav','voices',kids=True); print('ok')

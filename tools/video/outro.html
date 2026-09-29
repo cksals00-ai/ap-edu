@@ -11,6 +11,7 @@
    3.70–12.0  유지 (유튜브 최종 화면 요소가 이 위에 얹힌다)
    유튜브 최종 화면 요소 좌표(1920×1080 기준): 동영상 A x110 y300 w620 h349 · 재생목록 B x790 y300 w620 h349 · 구독 원 중심(1640,470) 지름 250 */
 const DUR=12.0;
+const KIDS=Q.get('kids')==='1';  // 아동용 영상: 유튜브 최종 화면·구독 버튼이 꺼지므로 자리·구독 연출 없이 다음 글자만
 const NEXT=Q.get('next')||'', NEXTROM=(Q.get('nextRom')||'').toUpperCase();
 const SLOT=[{x:110,y:300,w:620,h:349,label:'NEXT LESSON',ko:'다음 레슨'},{x:790,y:300,w:620,h:349,label:'ALL LESSONS',ko:'전체 레슨'}], SUB={x:1640,y:470,r:125};
 const BTN={sub:{x:300,y:780},like:{x:620,y:780},bell:{x:800,y:780}};
@@ -37,13 +38,15 @@ function render(t){
     g.font=`900 66px ${FONT}`; g.fillStyle=C.ink; g.fillText('See you in the next lesson!',110,190);
     g.font=`700 30px ${FONT}`; g.fillStyle=C.brown; g.fillText('다음 레슨에서 만나요 · Thanks for learning with the cubs',114,240); g.restore(); }
   // 최종 화면 자리 (유튜브 요소가 얹힐 곳)
-  SLOT.forEach((s,i)=>{ const a=ap(1+i); if(a<=0) return; g.save(); g.globalAlpha=cl(a); const cx=s.x+s.w/2, cy=s.y+s.h/2; g.translate(cx,cy); g.scale(lerp(.9,1,cl(a)),lerp(.9,1,cl(a))); g.translate(-cx,-cy);
+  if(KIDS&&NEXT){ const a=ap(1); if(a>0){ const sz=300, x=420, y=560; g.save(); g.globalAlpha=cl(a); g.font=`900 34px ${FONT}`; g.textAlign='center'; g.fillStyle=C.brown; g.fillText('NEXT LESSON',x,y-sz/2-40); g.restore();
+    const ts=sz*eOB(cl((t-.5)/.5),1.6); if(ts>8) tile(x,y,{size:ts,ch:NEXT,border:C.honey}); if(NEXTROM){ g.save(); g.globalAlpha=cl(a); g.font=`900 48px ${FONT}`; g.textAlign='center'; g.fillStyle=C.honey; g.fillText(NEXTROM,x,y+sz/2+60); g.restore(); } } }
+  if(!KIDS) SLOT.forEach((s,i)=>{ const a=ap(1+i); if(a<=0) return; g.save(); g.globalAlpha=cl(a); const cx=s.x+s.w/2, cy=s.y+s.h/2; g.translate(cx,cy); g.scale(lerp(.9,1,cl(a)),lerp(.9,1,cl(a))); g.translate(-cx,-cy);
     shadow(30,12,.18); g.fillStyle='rgba(255,253,248,.55)'; rr(s.x,s.y,s.w,s.h,26); g.fill(); noShadow();
     g.setLineDash([14,12]); g.lineWidth=4; g.strokeStyle='rgba(74,44,22,.35)'; rr(s.x+2,s.y+2,s.w-4,s.h-4,24); g.stroke(); g.setLineDash([]);
     g.textAlign='center'; g.textBaseline='middle'; g.fillStyle='rgba(74,44,22,.55)'; g.font=`900 34px ${FONT}`; g.fillText(s.label,cx,cy-10);
     g.font=`700 24px ${FONT}`; g.fillText(i===0&&NEXT?`${s.ko} · ${NEXT} ${NEXTROM}`:s.ko,cx,cy+32); g.restore(); });
   // 구독 원 자리
-  const sa=ap(3); if(sa>0){ g.save(); g.globalAlpha=cl(sa); g.translate(SUB.x,SUB.y); g.scale(cl(sa),cl(sa)); shadow(30,12,.2); g.fillStyle='rgba(255,253,248,.6)'; g.beginPath(); g.arc(0,0,SUB.r,0,Math.PI*2); g.fill(); noShadow();
+  const sa=KIDS?0:ap(3); if(sa>0){ g.save(); g.globalAlpha=cl(sa); g.translate(SUB.x,SUB.y); g.scale(cl(sa),cl(sa)); shadow(30,12,.2); g.fillStyle='rgba(255,253,248,.6)'; g.beginPath(); g.arc(0,0,SUB.r,0,Math.PI*2); g.fill(); noShadow();
     g.setLineDash([12,10]); g.lineWidth=4; g.strokeStyle='rgba(74,44,22,.35)'; g.beginPath(); g.arc(0,0,SUB.r-2,0,Math.PI*2); g.stroke(); g.setLineDash([]); g.restore(); }
   // 4남매 (오른쪽 아래) — 누를 때마다 한 마리씩 뛴다
   const CXS=[1300,1500,1690,1860], CHS=[330,320,340,325];
@@ -51,7 +54,7 @@ function render(t){
     const jt=[CLICK.sub,CLICK.like,CLICK.bell,4.0][i], j=t-jt; const hop=j>0&&j<.5?Math.sin(j/.5*Math.PI)*60:0; const idle=Math.sin((t+i*.4)*Math.PI*1.0)*.012;
     cub(CUBS[i].id,CXS[i]-120,foot-hop,CHS[i]*1.3,1,1+idle,Math.sin(t*2+i)*.02,1); }
   // 버튼 줄: SUBSCRIBE · 좋아요 · 알림
-  const ba=ap(4); if(ba>0){ g.save(); g.globalAlpha=cl(ba); g.translate(0,(1-cl(ba))*20);
+  const ba=KIDS?0:ap(4); if(ba>0){ g.save(); g.globalAlpha=cl(ba); g.translate(0,(1-cl(ba))*20);
     // 구독 버튼
     const sd=t-CLICK.sub, subbed=sd>0, press=sd>0&&sd<.18?1-Math.sin(sd/.18*Math.PI)*.08:1, bw=subbed?360:330;
     g.save(); g.translate(BTN.sub.x,BTN.sub.y); g.scale(press*(1+(sd>0&&sd<.5?wobble(sd,4,8)*.06:0)),press);
@@ -74,7 +77,7 @@ function render(t){
     g.restore(); }
   // 손가락 커서: 구독 → 좋아요 → 종
   const path=[[1.0,{x:560,y:1000}],[CLICK.sub-.12,BTN.sub],[CLICK.like-.12,BTN.like],[CLICK.bell-.12,BTN.bell],[3.9,{x:900,y:1000}]];
-  if(t>1.0&&t<3.95){ let p=path[path.length-1][1]; for(let i=0;i<path.length-1;i++){ const [t0,a]=path[i], [t1,b]=path[i+1]; if(t>=t0&&t<t1){ const e=eIOC(P(t,t0,t1-.1)); p={x:lerp(a.x,b.x,e)+22,y:lerp(a.y,b.y,e)+30}; break; } }
+  if(!KIDS&&t>1.0&&t<3.95){ let p=path[path.length-1][1]; for(let i=0;i<path.length-1;i++){ const [t0,a]=path[i], [t1,b]=path[i+1]; if(t>=t0&&t<t1){ const e=eIOC(P(t,t0,t1-.1)); p={x:lerp(a.x,b.x,e)+22,y:lerp(a.y,b.y,e)+30}; break; } }
     const press=[CLICK.sub,CLICK.like,CLICK.bell].some(c=>t>c-.1&&t<c+.08)?.86:1;
     g.save(); g.globalAlpha=cl(P(t,1.0,1.2))*(1-P(t,3.7,3.95)); shadow(12,6,.35); icon(HAND,p.x,p.y+18,96*press,'#fff'); noShadow(); g.lineWidth=0; icon(HAND,p.x,p.y+18,90*press,C.ink); g.restore(); }
   // 앱 알약

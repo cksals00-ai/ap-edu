@@ -1,0 +1,198 @@
+[
+ {
+  "name": "S1_ah_15s",
+  "src": "src_ah.mp4",
+  "t0": 0.0,
+  "t1": 17.5,
+  "title": "Korean vowel ㅏ (AH)",
+  "sub": "Your first Korean sound",
+  "footer": "Full lesson · Hangeul Cubs Lesson 1",
+  "caps": [
+   [
+    0.0,
+    3.3,
+    "Your first Korean sound starts with an open mouth."
+   ],
+   [
+    4.06,
+    6.68,
+    "아 (AH) — let's learn one letter together."
+   ],
+   [
+    7.46,
+    13.12,
+    "Listen… 아. Relax your lips… 아. Now you try!"
+   ],
+   [
+    13.86,
+    17.1,
+    "This letter makes the sound 아 (AH)."
+   ]
+  ]
+ },
+ {
+  "name": "S2_ah_to_ya",
+  "src": "src_ya.mp4",
+  "t0": 0.0,
+  "t1": 21.6,
+  "title": "ㅏ → ㅑ (YA)",
+  "sub": "Can you hear the difference?",
+  "footer": "Full lesson · Hangeul Cubs Lesson 2",
+  "caps": [
+   [
+    0.0,
+    3.52,
+    "Look — our little line has a new friend."
+   ],
+   [
+    4.54,
+    6.48,
+    "아 becomes 야."
+   ],
+   [
+    7.24,
+    8.42,
+    "Can you hear the difference?"
+   ],
+   [
+    9.38,
+    10.8,
+    "아 … 야"
+   ],
+   [
+    12.52,
+    13.98,
+    "Listen, then copy me."
+   ],
+   [
+    14.72,
+    16.54,
+    "야, 야"
+   ],
+   [
+    17.5,
+    20.04,
+    "Let your mouth open as you say it."
+   ],
+   [
+    20.64,
+    21.3,
+    "Your turn!"
+   ]
+  ],
+  "layout": "B",
+  "card": [
+   [
+    "아 → 야",
+    "AH → YA"
+   ]
+  ]
+ },
+ {
+  "name": "S3_words_ah",
+  "src": "src_ah.mp4",
+  "t0": 20.3,
+  "t1": 35.7,
+  "title": "3 Korean words with ㅏ",
+  "sub": "아빠 · 아기 · 아이스크림",
+  "footer": "Full lesson · Hangeul Cubs Lesson 1",
+  "caps": [
+   [
+    20.68,
+    22.94,
+    "Let's find 아 in three words."
+   ],
+   [
+    23.72,
+    25.98,
+    "아빠 (appa) means dad."
+   ],
+   [
+    26.66,
+    28.9,
+    "아기 (agi) means baby."
+   ],
+   [
+    29.4,
+    33.44,
+    "아이스크림 — ice cream!"
+   ],
+   [
+    33.9,
+    35.3,
+    "They all begin with 아."
+   ]
+  ]
+ },
+ {
+  "name": "S4_words_ya",
+  "src": "src_ya.mp4",
+  "t0": 33.3,
+  "t1": 60.6,
+  "title": "3 Korean words with ㅑ",
+  "sub": "야구 · 야채 · 야옹",
+  "footer": "Full lesson · Hangeul Cubs Lesson 2",
+  "caps": [
+   [
+    33.62,
+    34.94,
+    "A ball and a bat…"
+   ],
+   [
+    35.42,
+    39.5,
+    "Baseball is 야구 (yagu)."
+   ],
+   [
+    40.04,
+    42.24,
+    "Say it with me: 야구!"
+   ],
+   [
+    42.98,
+    44.14,
+    "Crunchy vegetables…"
+   ],
+   [
+    45.02,
+    50.18,
+    "In Korean we say 야채 (yachae)."
+   ],
+   [
+    50.64,
+    52.54,
+    "Your turn: 야채!"
+   ],
+   [
+    53.08,
+    54.88,
+    "What does a cat say in Korean?"
+   ],
+   [
+    55.84,
+    56.9,
+    "야옹 (yaong)!"
+   ],
+   [
+    57.36,
+    60.16,
+    "Can you meow with me?"
+   ]
+  ],
+  "layout": "B",
+  "card": [
+   [
+    "야구",
+    "baseball"
+   ],
+   [
+    "야채",
+    "vegetables"
+   ],
+   [
+    "야옹",
+    "meow"
+   ]
+  ]
+ }
+]

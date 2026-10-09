@@ -1,4 +1,4 @@
-# AP Edu — Hangeul Cubs 공식 사이트 (edu.apholdings.kr)
+# AP Edu — Hangeul Cubs 공식 사이트 (hallyu.apholdings.kr)
 
 AP Games(games.apholdings.kr)와 같은 구조의 정적 사이트. `python3 build.py` 로 `ko/` `en/` 를 다시 만든다.
 

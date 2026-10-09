@@ -76,7 +76,7 @@ def html_tall(l, t):
 <div class="info">{''.join(f'<div><small>{a}</small><b>{b}</b></div>' for a, b in t['info'])}</div></div>
 <p class="fine">{t['fine']}</p>
 <div class="stage"><div class="dots"></div>{cub_h}</div>
-<div class="foot"><span class="url">edu.apholdings.kr</span></div></body></html>''', W, H
+<div class="foot"><span class="url">hallyu.apholdings.kr</span></div></body></html>''', W, H
 
 def html_wide(l, t):
     W, H = 1600, 900
@@ -94,7 +94,7 @@ def html_wide(l, t):
 <h1><span class="month">{t['month']}</span><br>{t['title']}</h1><p class="sub">{t['sub']}</p>
 <div class="card"><span class="tag">{t['prizeTag']}</span><div class="prize">{t['prize']}</div><div class="prize2">{t['prize2']}</div></div>
 <div class="info">{''.join(f'<div><small>{a}</small><b>{b}</b></div>' for a, b in t['info'])}</div></div>
-<span class="url">edu.apholdings.kr</span><p class="fine">{t['fine']}</p>
+<span class="url">hallyu.apholdings.kr</span><p class="fine">{t['fine']}</p>
 <div class="stage"><div class="dots"></div><div class="big30">30</div>{cub_h}</div></body></html>''', W, H
 
 SHOT = r'''

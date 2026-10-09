@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""AP Edu — Hangeul Cubs 사이트 빌더. python3 build.py → 정적 파일 (GitHub Pages, hallyu.apholdings.kr)."""
+"""AP Edu — Hangeul Cubs 사이트 빌더. python3 build.py → 정적 파일 (GitHub Pages, edu.apholdings.kr)."""
 import os, html
 from content import CUBS, UNITS, LESSONS, EPISODES, EVENT, CHALLENGE, NEWS, STORE, YT, APP_ID
-OUT = '.'; ORIGIN = 'https://hallyu.apholdings.kr'; V = '7'
+OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '7'
 e = html.escape
 T = {
  'ko': dict(lang='ko', other='en', otherLabel='EN',
@@ -307,9 +307,9 @@ from challenge_i18n import CH_I18N
 for l, d in CH_I18N.items():
     build_challenge(l, d, '<script src="/assets/event-config.js?v=1"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script><script src="/assets/event.js?v=2" defer></script>')
 
-out('/index.html', '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/ko/"><link rel="canonical" href="https://hallyu.apholdings.kr/ko/"><script>(function(){var l=(navigator.language||"").toLowerCase().slice(0,2);location.replace("/"+(["ko","vi","fr"].indexOf(l)>=0?l:"en")+"/")})()</script></head><body></body></html>')
+out('/index.html', '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/ko/"><link rel="canonical" href="https://edu.apholdings.kr/ko/"><script>(function(){var l=(navigator.language||"").toLowerCase().slice(0,2);location.replace("/"+(["ko","vi","fr"].indexOf(l)>=0?l:"en")+"/")})()</script></head><body></body></html>')
 out('/404.html', '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/ko/"></head><body></body></html>')
-out('/CNAME', 'hallyu.apholdings.kr'); out('/.nojekyll', '')
+out('/CNAME', 'edu.apholdings.kr'); out('/.nojekyll', '')
 urls = [f'/{l}/{s}' for l in LANGS for s in ['', 'cubs/', 'episodes/', 'app/', 'event/', 'event/challenge/', 'board/', 'news/'] + [f'cubs/{c["id"]}/' for c in CUBS]]
 out('/sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + ''.join(f'<url><loc>{ORIGIN}{u}</loc></url>' for u in urls) + '</urlset>')
 out('/robots.txt', f'User-agent: *\nAllow: /\nSitemap: {ORIGIN}/sitemap.xml\n')

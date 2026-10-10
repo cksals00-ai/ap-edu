@@ -8,3 +8,4 @@ AP Games(games.apholdings.kr)와 같은 구조의 정적 사이트. `python3 bui
 - `assets/event.js` — 체험단 신청 → A.P Holdings Supabase `edu_event_applications` (insert 전용, 설정 `event-config.js`)
 - 공개(publishable) 키만 둔다. secret / service_role 키는 절대 넣지 않는다.
 - 캐릭터 3D 원화·2D 모델 시트·유튜브 썸네일은 `assets/art` `assets/yt`. 새 그림은 대표 원화 우선.
+

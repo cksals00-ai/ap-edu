@@ -51,9 +51,10 @@ def build(spec):
     for _,_,p in caps: inputs+=['-loop','1','-i',p]
     L=spec.get("layout","A")
     if L=="A": fc=["[1:v]crop=980:550:70:248,scale=1000:561[ch]","[1:v]crop=728:832:1112:148,scale=540:617[cd]","[0:v][ch]overlay=40:320[v0]","[v0][cd]overlay=270:1030[v1]"]
+    elif L=="A2": fc=["[1:v]crop=900:720:100:30,scale=700:560[ch]","[1:v]crop=740:900:1090:90,scale=480:584[cd]","[0:v][ch]overlay=190:300[v0]","[v0][cd]overlay=300:1070[v1]"]
     else: fc=["[1:v]scale=1080:608[ch]","[0:v][ch]overlay=0:320[v1]"]
     last='v1'
-    capy=872 if L=='A' else 905
+    capy=862 if L in ('A','A2') else 905
     for i,(a,b,_) in enumerate(caps):
         fc.append(f"[{last}][{i+2}:v]overlay=0:{capy}:enable='between(t,{a:.2f},{b+0.35:.2f})'[c{i}]"); last=f'c{i}'
     fc.append(f"[{last}]trim=0:{dur},setpts=PTS-STARTPTS,fps=30,format=yuv420p[vout]")

@@ -1,0 +1,191 @@
+[
+ {
+  "name": "W1_yo_15s",
+  "src": "src/HangeulCubs_Lesson6_YO_en_v2.mp4",
+  "t0": 2.6,
+  "t1": 22.6,
+  "layout": "A2",
+  "title": "Korean vowel ㅛ (YO)",
+  "sub": "요리 · 요가 · 요정",
+  "footer": "Full lesson · Hangeul Cubs Lesson 6",
+  "caps": [
+   [
+    3.0,
+    5.2,
+    "Today's letter is ㅛ (YO)."
+   ],
+   [
+    5.8,
+    9.5,
+    "Say it with me: 요 … 요리 (yori) — cooking."
+   ],
+   [
+    12.0,
+    13.6,
+    "요가 (yoga) — yoga."
+   ],
+   [
+    15.6,
+    17.9,
+    "요정 (yojeong) — a fairy."
+   ],
+   [
+    19.4,
+    22.2,
+    "Can you say it with me? 요!"
+   ]
+  ]
+ },
+ {
+  "name": "W2_words_u",
+  "src": "src/HangeulCubs_Lesson7_U_en_v2.mp4",
+  "t0": 7.6,
+  "t1": 18.4,
+  "layout": "B",
+  "title": "3 Korean words with ㅜ",
+  "sub": "우유 · 우산 · 우주",
+  "footer": "Full lesson · Hangeul Cubs Lesson 7",
+  "caps": [
+   [
+    8.0,
+    10.0,
+    "우유 (uyu) — milk."
+   ],
+   [
+    11.2,
+    13.6,
+    "우산 (usan) — an umbrella."
+   ],
+   [
+    16.0,
+    18.0,
+    "우주 (uju) — space."
+   ]
+  ],
+  "card": [
+   [
+    "우유",
+    "milk"
+   ],
+   [
+    "우산",
+    "umbrella"
+   ],
+   [
+    "우주",
+    "space"
+   ]
+  ]
+ },
+ {
+  "name": "W3_write_yu",
+  "src": "src/HangeulCubs_Lesson8_YU_en_v2.mp4",
+  "t0": 23.6,
+  "t1": 42.8,
+  "layout": "A2",
+  "title": "How to write ㅠ (YU)",
+  "sub": "3 strokes — follow along",
+  "footer": "Full lesson · Hangeul Cubs Lesson 8",
+  "caps": [
+   [
+    23.9,
+    25.4,
+    "Now let's write ㅠ (YU)."
+   ],
+   [
+    25.8,
+    29.8,
+    "Stroke 1 — a long line across."
+   ],
+   [
+    30.2,
+    33.9,
+    "Stroke 2 — a short line down."
+   ],
+   [
+    34.6,
+    38.8,
+    "Stroke 3 — one more short line down."
+   ],
+   [
+    39.4,
+    40.3,
+    "That's ㅠ!"
+   ],
+   [
+    40.8,
+    42.5,
+    "Trace it with me: 유."
+   ]
+  ]
+ },
+ {
+  "name": "W4_write_eu",
+  "src": "src/HangeulCubs_Lesson9_EU_en_v2.mp4",
+  "t0": 23.3,
+  "t1": 38.9,
+  "layout": "A2",
+  "title": "One-stroke letter ㅡ (EU)",
+  "sub": "The easiest Korean vowel",
+  "footer": "Full lesson · Hangeul Cubs Lesson 9",
+  "caps": [
+   [
+    23.6,
+    27.5,
+    "Now let's write ㅡ (EU) — just one stroke."
+   ],
+   [
+    28.9,
+    32.5,
+    "A long line across, from left to right."
+   ],
+   [
+    33.2,
+    35.2,
+    "That's ㅡ. So easy!"
+   ],
+   [
+    36.4,
+    38.7,
+    "Trace it with me: 으."
+   ]
+  ]
+ },
+ {
+  "name": "W5_quiz_i",
+  "src": "src/HangeulCubs_Lesson10_I_en_v2.mp4",
+  "t0": 40.6,
+  "t1": 52.0,
+  "layout": "A2",
+  "title": "Quiz: which one is ㅣ (I)?",
+  "sub": "Pause and guess before the answer!",
+  "footer": "Full lesson · Hangeul Cubs Lesson 10",
+  "caps": [
+   [
+    40.9,
+    41.9,
+    "Quiz time!"
+   ],
+   [
+    42.4,
+    43.6,
+    "Which one is ㅣ (I)?"
+   ],
+   [
+    44.0,
+    47.4,
+    "Look carefully… ㅡ, ㅣ or ㅏ?"
+   ],
+   [
+    47.6,
+    50.5,
+    "Yes — that one is ㅣ!"
+   ],
+   [
+    50.9,
+    51.8,
+    "Great job. Comment your answer!"
+   ]
+  ]
+ }
+]

@@ -2,11 +2,11 @@
 """AP Edu — Hangeul Cubs 사이트 빌더. python3 build.py → 정적 파일 (GitHub Pages, edu.apholdings.kr)."""
 import os, html
 from content import CUBS, UNITS, LESSONS, EPISODES, EVENT, CHALLENGE, NEWS, STORE, YT, APP_ID
-OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '7'
+OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '8'
 e = html.escape
 T = {
  'ko': dict(lang='ko', other='en', otherLabel='EN',
-   nav=[('/ko/', '홈'), ('/ko/cubs/', '4남매'), ('/ko/episodes/', '에피소드'), ('/ko/app/', '앱'), ('/ko/event/', '이벤트'), ('/ko/board/', '게시판'), ('/ko/news/', '소식')],
+   nav=[('/ko/', '홈'), ('/ko/cubs/', '4남매'), ('/ko/episodes/', '에피소드'), ('/ko/app/', '앱'), ('/ko/event/challenge/', '이벤트'), ('/ko/board/', '게시판'), ('/ko/news/', '소식')],
    heroEyebrow='AP EDU · HANGEUL CUBS', heroTitle=('호랑이 4남매와', '배우는 한글.'),
    heroLead='한 편에 글자 하나. 보고, 말하고, 쓰고, 노래한다. 한국어를 처음 만나는 아이와 어른을 위해.',
    cta='4남매 만나기', cta2='첫 레슨 보기', plat='iPhone · iPad 무료 · YouTube @hangeulcubs',
@@ -22,7 +22,7 @@ T = {
    prev='이전', next='다음', backCubs='4남매 목록',
  ),
  'en': dict(lang='en', other='ko', otherLabel='KO',
-   nav=[('/en/', 'Home'), ('/en/cubs/', 'The Cubs'), ('/en/episodes/', 'Episodes'), ('/en/app/', 'App'), ('/en/event/', 'Events'), ('/en/board/', 'Community'), ('/en/news/', 'News')],
+   nav=[('/en/', 'Home'), ('/en/cubs/', 'The Cubs'), ('/en/episodes/', 'Episodes'), ('/en/app/', 'App'), ('/en/event/challenge/', 'Events'), ('/en/board/', 'Community'), ('/en/news/', 'News')],
    heroEyebrow='AP EDU · HANGEUL CUBS', heroTitle=('Learn Korean with', 'four tiger cubs.'),
    heroLead='One letter per episode. See it, say it, write it, sing it. For children and adults meeting Korean for the first time.',
    cta='Meet the cubs', cta2='Watch Lesson 1', plat='Free on iPhone · iPad · YouTube @hangeulcubs',
@@ -47,7 +47,7 @@ def shell(l, title, desc, path, body, og=None, extra_head=''):
     t = T[l]; rest = path[3:]
     alts = ''.join(f'<link rel="alternate" hreflang="{k}" href="{ORIGIN}/%%{k}%%{rest}">' for k in LANGS)
     langsw = '<div class="langs-top" role="navigation" aria-label="Language">' + ''.join(f'<a href="/%%{k}%%{rest}" hreflang="{k}" data-sw="{k}">{k.upper()}</a>' for k in LANGS) + '</div>'
-    nav = ''.join(f'<a href="{h}"{" class=on" if path == h or (h != f"/{l}/" and path.startswith(h)) else ""}>{e(n)}</a>' for h, n in t['nav'])
+    nav = ''.join(f'<a href="{h}"{" class=on" if path == h or (h != f"/{l}/" and path.startswith(h)) or (h.endswith("/event/challenge/") and path.startswith(f"/{l}/event/")) else ""}>{e(n)}</a>' for h, n in t['nav'])
     og = og or '/assets/art/family.jpg'
     return f'''<!doctype html><html lang="{l}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{e(title)}</title>
 <meta name="description" content="{e(desc, True)}"><link rel="canonical" href="{ORIGIN}{path}">{alts}
@@ -123,8 +123,10 @@ for l in ('ko', 'en'):
     eps = ''.join(ep_card(l, x, compact=True) for x in [x for x in EPISODES if x['kind'] != 'short'][:6])
     stats = ''.join(f'<article><b class="big">{a}</b><h3>{e(h_)}</h3><p>{e(d_)}</p></article>' for a, h_, d_ in t['stats'])
     news = ''.join(f'<article><time>{n[0]}</time><h3>{e(n[1] if l=="ko" else n[3])}</h3><p>{e(n[2] if l=="ko" else n[4])}</p></article>' for n in NEWS)
-    ev_ko = f'체험단 1기 {EVENT["n"]}명 · {EVENT["apply"][1][5:].replace("-", "/")}까지 신청 — 그리고 11월, 30일 챌린지: 한 명에게 Meta AI 글래스'
-    ev_en = f'Testers · {EVENT["n"]} places · apply by {EVENT["apply"][1]} — then in November, the 30-Day Challenge: Meta AI glasses for one learner'
+    ev_ko = f'체험단 1기는 마감됐어요. 지금은 30일 챌린지 신청 중 — {CHALLENGE["apply"][1][5:].replace("-", "/")}까지, 한 명에게 Meta AI 글래스.'
+    ev_en = f'Tester round 1 has closed. The 30-Day Challenge is open — apply by {CHALLENGE["apply"][1]}; Meta AI glasses for one learner.'
+    ev_h2 = '30일, 4남매와 한글.' if l == 'ko' else '30 days of Korean with the cubs.'
+    ev_btn = '챌린지 신청' if l == 'ko' else 'Apply for the challenge'
     body = f'''<section class="hero"><img class="bg" src="/assets/art/family.jpg" alt="" width="1400" height="787"><div class="shade"></div>
 <div class="wrap hero-copy"><span class="eyebrow">{e(t['heroEyebrow'])}</span><h1>{e(t['heroTitle'][0])}<br>{e(t['heroTitle'][1])}</h1><p class="lead">{e(t['heroLead'])}</p>
 <div class="actions"><a class="btn" href="/{l}/cubs/">{e(t['cta'])}</a><a class="btn ghost" href="/{l}/episodes/#vpZ7JeHaz6I">{e(t['cta2'])}</a></div><p class="plat">{e(t['plat'])}</p></div></section>
@@ -132,7 +134,7 @@ for l in ('ko', 'en'):
 <section class="sec"><div class="wrap"><div class="sh"><h2>{e(t['cubs'])}</h2><p>{e(t['cubsLead'])}</p><a class="more" href="/{l}/cubs/">{e(t['all'])} →</a></div><div class="cgrid">{cubs}</div></div></section>
 <section class="sec soft"><div class="wrap"><div class="sh"><h2>{e(t['episodes'])}</h2><p>{e(t['episodesLead'])}</p><a class="more" href="/{l}/episodes/">{e(t['all'])} →</a></div><div class="egrid">{eps}</div></div></section>
 <section class="sec"><div class="wrap app-tease"><div><span class="eyebrow">APP</span><h2>{e(t['appLead'])}</h2><p class="lead">{'42레슨 무료. 받침을 색으로 나눠 보여 주고, 기기 안의 한국어 목소리로 읽어 준다. 계정도 광고도 없다.' if l=='ko' else '42 free lessons. The bottom block is shown in its own colour and read aloud by the device’s Korean voice. No account, no ads.'}</p><div class="actions"><a class="btn" href="{STORE[l]}" target="_blank" rel="noopener">{e(t['dl'])}</a><a class="btn ghost" href="/{l}/app/">{e(t['all'])}</a></div></div><img src="/assets/art/screens.jpg" alt="" loading="lazy" width="1400" height="787"></div></section>
-<section class="sec event-band"><div class="wrap"><div class="eband"><div><span class="eyebrow">{e(t['event'])}</span><h2>{e(t['eventLead'])}</h2><p>{e(ev_ko if l=='ko' else ev_en)}</p></div><a class="btn" href="/{l}/event/">{e(t['applyBtn'])}</a></div></div></section>
+<section class="sec event-band"><div class="wrap"><div class="eband"><div><span class="eyebrow">{e(t['event'])}</span><h2>{e(ev_h2)}</h2><p>{e(ev_ko if l=='ko' else ev_en)}</p></div><a class="btn" href="/{l}/event/challenge/">{e(ev_btn)}</a></div></div></section>
 <section class="sec"><div class="wrap"><div class="sh"><h2>{e(t['news'])}</h2><a class="more" href="/{l}/news/">{e(t['all'])} →</a></div><div class="ngrid">{news}</div></div></section>'''
     out(f'/{l}/index.html', shell(l, 'Hangeul Cubs — ' + ('호랑이 4남매와 배우는 한글 | AP Edu' if l == 'ko' else 'Learn Korean with four tiger cubs | AP Edu'), t['heroLead'], f'/{l}/', body))
 
@@ -190,17 +192,19 @@ for l in ('ko', 'en'):
     # EVENT
     a0, a1 = EVENT['apply']; r0, r1 = EVENT['run']
     if l == 'ko':
-        steps = [('신청', f'{a0[5:].replace("-", "/")} – {a1[5:].replace("-", "/")}', '아래 폼으로. 아이·어른·가족 누구나.'), ('발표', EVENT['announce'][5:].replace('-', '/'), f'{EVENT["n"]}명. 이메일로 코드를 보내 드려요.'), ('체험', f'{r0[5:].replace("-", "/")} – {r1[5:].replace("-", "/")}', '받침 마스터 18레슨을 2주 동안.'), ('후기', EVENT['review_due'][5:].replace('-', '/'), '게시판 「후기」에 한 편, 또는 App Store 리뷰.')]
+        steps = [('신청', f'{a0[5:].replace("-", "/")} – {a1[5:].replace("-", "/")}', '아이·어른·가족 누구나. (마감)'), ('발표', EVENT['announce'][5:].replace('-', '/'), f'{EVENT["n"]}명. 이메일로 코드를 보내 드려요.'), ('체험', f'{r0[5:].replace("-", "/")} – {r1[5:].replace("-", "/")}', '받침 마스터 18레슨을 2주 동안.'), ('후기', EVENT['review_due'][5:].replace('-', '/'), '게시판 「후기」에 한 편, 또는 App Store 리뷰.')]
         give = [('받침 마스터 무료', '₩4,400 팩을 코드로 열어 드려요. 기간이 끝나도 남아요.'), ('이름 남기기', '원하면 게시판 후기에 닉네임으로 소개해 드려요.'), ('다음 레슨 먼저', '새 레슨팩이 나오면 먼저 써 봅니다.')]
         ask = [('2주 사용', '받침 마스터 18레슨 중 절반 이상.'), ('후기 한 편', '좋았던 것 하나, 고칠 것 하나면 충분해요.'), ('짧은 설문', '3분. 이메일로 보내 드려요.')]
         note = '개인정보는 체험단 연락(코드 발송·설문)에만 쓰고, 체험이 끝나면 지웁니다. 아이 정보는 나이대만 받아요. 받침 마스터는 앱 업데이트(2.3) 승인 뒤 열리며, 코드는 승인 즉시 보내 드려요.'
         f = dict(name='이름 또는 닉네임', email='이메일', learner='누가 배우나요', learners=[('child', '아이 (보호자가 신청)'), ('adult', '어른 · 나'), ('family', '가족이 함께'), ('teacher', '선생님 · 교실')], age='아이 나이대 (선택)', ages=['', '4–6', '7–9', '10–12', '13+'], country='나라 · 지역 (선택)', device='기기', devices=[('iphone', 'iPhone'), ('ipad', 'iPad'), ('both', '둘 다')], channel='후기를 남길 곳 (선택 — 블로그·SNS 주소)', note='한 마디 (선택 — 왜 한글을 배우나요?)', consent='개인정보를 체험단 운영에만 쓰는 데 동의해요.', submit='신청하기', ok='신청을 받았어요. 10월 14일에 이메일로 알려 드릴게요.', err='보내지 못했어요. 잠시 뒤 다시 시도해 주세요.', many='같은 이메일로 이미 신청했어요.')
     else:
-        steps = [('Apply', f'{a0} – {a1}', 'Use the form below. Kids, adults, families, teachers.'), ('Results', EVENT['announce'], f'{EVENT["n"]} testers. Codes go out by email.'), ('Test', f'{r0} – {r1}', 'Two weeks with the 18 Batchim Master lessons.'), ('Review', EVENT['review_due'], 'One post in the community board, or an App Store review.')]
+        steps = [('Apply', f'{a0} – {a1}', 'Kids, adults, families, teachers. (Closed)'), ('Results', EVENT['announce'], f'{EVENT["n"]} testers. Codes go out by email.'), ('Test', f'{r0} – {r1}', 'Two weeks with the 18 Batchim Master lessons.'), ('Review', EVENT['review_due'], 'One post in the community board, or an App Store review.')]
         give = [('Batchim Master, free', 'The ₩4,400 pack unlocked by code. It stays yours afterwards.'), ('Your name on the board', 'If you like, we introduce your review by nickname.'), ('Next packs first', 'New lesson packs reach testers first.')]
         ask = [('Two weeks of use', 'At least half of the 18 lessons.'), ('One review', 'One thing you liked, one thing to fix — that’s enough.'), ('A short survey', 'Three minutes, by email.')]
         note = 'We use your details only to run the programme (sending codes, the survey) and delete them when it ends. For children we ask only an age band. Batchim Master unlocks once app update 2.3 is approved; codes are sent the moment it is.'
         f = dict(name='Name or nickname', email='Email', learner='Who is learning?', learners=[('child', 'A child (parent applies)'), ('adult', 'An adult · me'), ('family', 'The whole family'), ('teacher', 'A teacher · classroom')], age='Child’s age band (optional)', ages=['', '4–6', '7–9', '10–12', '13+'], country='Country · region (optional)', device='Device', devices=[('iphone', 'iPhone'), ('ipad', 'iPad'), ('both', 'Both')], channel='Where you’d post a review (optional — blog / social link)', note='One line (optional — why Korean?)', consent='I agree that my details are used only to run the tester programme.', submit='Apply', ok='Got it. We’ll email you on 14 October.', err='Couldn’t send. Please try again in a moment.', many='This email has already applied.')
+    closed_ko = '체험단 1기 신청은 10월 12일에 끝났어요. 다음 이벤트, 30일 챌린지(11월) 신청이 열려 있어요 — 10월 31일까지.'
+    closed_en = 'Applications for tester round 1 closed on 12 October. The next event, the 30-Day Challenge in November, is open for applications until 31 October.'
     steps_h = ''.join(f'<li><b>{e(a)}</b><time>{e(b)}</time><p>{e(c_)}</p></li>' for a, b, c_ in steps)
     give_h = ''.join(f'<li><b>{e(a)}</b><p>{e(b)}</p></li>' for a, b in give)
     ask_h = ''.join(f'<li><b>{e(a)}</b><p>{e(b)}</p></li>' for a, b in ask)
@@ -215,14 +219,15 @@ for l in ('ko', 'en'):
 <label class="full">{e(f['note'])}<textarea name="note" maxlength="600" rows="3"></textarea></label>
 <label class="full check"><input type="checkbox" name="consent" required> <span>{e(f['consent'])}</span></label>
 <div class="full actions"><button class="btn" type="submit">{e(f['submit'])}</button><p class="form-msg" role="status"></p></div></form>'''
-    sw = lambda cur: f'<div class="ev-switch"><a href="/{l}/event/"{" class=on" if cur=="tester" else ""}>{"체험단 1기 · 10월" if l=="ko" else "Testers · October"}</a><a href="/{l}/event/challenge/"{" class=on" if cur=="challenge" else ""}>{"30일 챌린지 · 11월" if l=="ko" else "30-Day Challenge · November"}</a></div>'
-    body = f'''<section class="page event"><div class="wrap">{sw("tester")}<span class="eyebrow">{'체험단 1기' if l=='ko' else 'Tester programme · round 1'}</span><h1>{e(t['eventLead'])}</h1><p class="lead">{f'받침 마스터 — 쓰는 대로 읽지 않는 소리 18레슨. {EVENT["n"]}명이 먼저 써 보고 한 편씩 남깁니다.' if l=='ko' else f'Batchim Master — 18 lessons on sounds that don’t match the spelling. {EVENT["n"]} people try it first and each leave one review.'}</p>
+    sw = lambda cur: f'<div class="ev-switch"><a href="/{l}/event/"{" class=on" if cur=="tester" else ""}>{"체험단 1기 · 종료" if l=="ko" else "Testers · Closed"}</a><a href="/{l}/event/challenge/"{" class=on" if cur=="challenge" else ""}>{"30일 챌린지 · 11월" if l=="ko" else "30-Day Challenge · November"}</a></div>'
+    body = f'''<section class="page event"><div class="wrap">{sw("tester")}<span class="eyebrow">{'체험단 1기 · 종료' if l=='ko' else 'Tester programme · round 1 · closed'}</span><h1>{e(t['eventLead'])}</h1><p class="lead">{f'받침 마스터 — 쓰는 대로 읽지 않는 소리 18레슨. {EVENT["n"]}명이 먼저 써 보고 한 편씩 남깁니다.' if l=='ko' else f'Batchim Master — 18 lessons on sounds that don’t match the spelling. {EVENT["n"]} people try it first and each leave one review.'}</p>
+<div class="closed-note"><div><b>{'마감' if l=='ko' else 'Closed'}</b><p>{e(closed_ko if l=='ko' else closed_en)}</p></div><a class="btn" href="/{l}/event/challenge/">{'챌린지 보기' if l=='ko' else 'See the challenge'}</a></div>
 <figure class="wide"><img src="/assets/art/scene_cheer.jpg" alt="" width="1600" height="893"></figure>
 <ol class="steps">{steps_h}</ol>
 <div class="two"><div><div class="sh"><h2>{'받는 것' if l=='ko' else 'What you get'}</h2></div><ul class="plain">{give_h}</ul></div><div><div class="sh"><h2>{'하는 것' if l=='ko' else 'What we ask'}</h2></div><ul class="plain">{ask_h}</ul></div></div>
-<div class="sh" id="form"><h2>{'신청' if l=='ko' else 'Apply'}</h2><p>{a0} – {a1}</p></div>{form}<p class="note">{e(note)}</p></div></section>'''
+<div class="sh" id="form"><h2>{'신청 · 마감' if l=='ko' else 'Applications · closed'}</h2><p>{a0} – {a1}</p></div><p class="note">{e(closed_ko if l=='ko' else closed_en)}</p></div></section>'''
     eh = '<script src="/assets/event-config.js?v=1"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script><script src="/assets/event.js?v=2" defer></script>'
-    out(f'/{l}/event/index.html', shell(l, f'{t["event"]} — Hangeul Cubs', t['eventLead'], f'/{l}/event/', body, og='/assets/art/scene_cheer.jpg', extra_head=eh))
+    out(f'/{l}/event/index.html', shell(l, f'{t["event"]} — Hangeul Cubs', t['eventLead'], f'/{l}/event/', body, og='/assets/art/scene_cheer.jpg'))
 
     # CHALLENGE (30일 · Meta AI 글래스)
     C = CHALLENGE; ca0, ca1 = C['apply']; cr0, cr1 = C['run']; md = lambda d: d[5:].replace('-', '/')
@@ -234,7 +239,7 @@ for l in ('ko', 'en'):
         c_score = [('40', '성실도', '주간 기록 4회 · 앱 진도'), ('40', '후기 내용', '어떤 글자·어떤 장면이 도움됐나, 고칠 점'), ('20', '표현', '영상·그림·아이의 참여')]
         c_prize = [('Ray-Ban Meta AI 글래스 · 1명', '한국 정가 기준 69만원 선. 당첨자 나라의 공식 판매처에서 주문해 보내요. 파는 나라가 아니면 같은 금액(USD 450 상당)의 Amazon 또는 Apple 기프트로 대신해요.'), ('격려상 · 5명', 'App Store 기프트 3만원. 심사 6~10위.'), ('세금·배송', '제세공과금과 배송비는 AP Edu가 부담해요. 통관에 필요한 이름·주소·연락처는 당첨자에게만 따로 받아요.')]
         c_rules = ['주최: AP Edu (A.P Holdings, 대한민국). Meta · Ray-Ban · YouTube · Instagram · TikTok은 이 이벤트의 후원사가 아니며 어떤 책임도 지지 않아요.', '참가는 무료이고 구매 조건이 없어요. 받침 마스터 구매 여부는 심사에 영향을 주지 않아요.', '만 14세 이상 본인 신청. 14세 미만 아이는 보호자가 신청하고 보호자 명의로 참가해요.', '법으로 금지된 지역, 그리고 브라질 · 이탈리아 · 캐나다 퀘벡 거주자는 참가할 수 없어요(현지 사전 등록 절차 때문).', '심사는 위 기준으로 AP Edu가 하며, 동점이면 주간 기록을 먼저 낸 순서예요. 참가자 수와 관계없이 1명을 선정해요.', 'App Store 평점·리뷰는 자유이며 조건이 아니에요. 좋아요·구독도 조건이 아니에요.', '후기는 참가자 본인의 것이에요. 다만 이벤트 소개와 채널 홍보에 인용·공유할 수 있어요(신청 시 동의).', '개인정보(이름·이메일·국가·나이대·기기)는 이벤트 운영에만 쓰고 종료 후 삭제해요. 배송 정보는 당첨자에게만 받아요.', '거짓 기록, 남의 글 도용, 여러 계정 참가는 제외해요. 경품은 사정에 따라 동급 상품으로 바뀔 수 있어요. 규칙의 최종 해석은 AP Edu가 해요.', '경품에 붙는 한국 세금(기타소득 22%)은 AP Edu가 내요. 당첨자 나라의 세금·수입 절차가 따로 있으면 안내해 드려요.']
-        c_form_note = f'신청은 {md(ca0)}에 열려요. 그때까지는 체험단 1기에 먼저 참여해 보세요.'
+        c_form_note = f'신청은 {md(ca0)} – {md(ca1)}. 체험단 1기는 마감됐어요.'
         c_soon = '신청 준비 중 — 10/13 오픈'
         fx = dict(name='이름 또는 닉네임', email='이메일', learner='누가 배우나요', learners=[('child', '아이 (보호자가 신청)'), ('adult', '어른 · 나'), ('family', '가족이 함께'), ('teacher', '선생님 · 교실')], age='아이 나이대 (선택)', ages=['', '4–6', '7–9', '10–12', '13+'], country='나라 · 지역', device='기기', devices=[('iphone', 'iPhone'), ('ipad', 'iPad'), ('both', '둘 다')], channel='후기를 올릴 본인 SNS · 블로그 주소', note='한 마디 (선택 — 왜 한글을 배우나요?)', consent='규칙을 읽었고, 개인정보를 이벤트 운영에만 쓰고 후기를 인용할 수 있다는 데 동의해요.', submit='챌린지 신청', ok='신청을 받았어요. 11월 1일에 시작 안내를 보내 드릴게요.', err='보내지 못했어요. 잠시 뒤 다시 시도해 주세요.', many='같은 이메일로 이미 신청했어요.')
     else:
@@ -245,11 +250,11 @@ for l in ('ko', 'en'):
         c_score = [('40', 'Consistency', '4 weekly logs · app progress'), ('40', 'Substance', 'which letters and scenes helped, what to fix'), ('20', 'Expression', 'video, drawings, your child taking part')]
         c_prize = [('Ray-Ban Meta AI glasses · 1 winner', 'About ₩690,000 at Korean retail. Ordered from the official store in the winner’s country. Where they aren’t sold, an Amazon or Apple gift of equal value (about USD 450) instead.'), ('Encouragement · 5', 'App Store gift ₩30,000 — places 6 to 10.'), ('Tax & shipping', 'AP Edu pays the Korean prize tax and shipping. Name, address and phone for delivery are collected from the winner only.')]
         c_rules = ['Organiser: AP Edu (A.P Holdings, Republic of Korea). Meta, Ray-Ban, YouTube, Instagram and TikTok are not sponsors of this event and bear no responsibility for it.', 'Entry is free; no purchase is necessary. Buying Batchim Master has no effect on judging.', 'Enter in your own name if you are 14 or older. For a child under 14, a parent or guardian applies and takes part in their own name.', 'Not open where prohibited by law, or to residents of Brazil, Italy or Quebec (local pre-registration requirements).', 'Judging is done by AP Edu on the criteria above; ties go to the earlier weekly logs. One winner is chosen regardless of the number of entrants.', 'App Store ratings and reviews are optional and never a condition. Neither are likes or subscriptions.', 'Your review stays yours. We may quote or share it to present the event and the channel (consent given on applying).', 'Personal data (name, email, country, age band, device) is used only to run the event and deleted afterwards. Delivery details are collected from the winner only.', 'Fake logs, copied posts or multiple accounts are disqualified. The prize may be replaced with one of equal value where necessary. AP Edu’s reading of these rules is final.', 'Korean prize tax (22% miscellaneous-income withholding) is paid by AP Edu. If your country has its own tax or import steps, we will guide you through them.']
-        c_form_note = f'Applications open on {ca0}. Until then, join the October tester round.'
+        c_form_note = f'Applications: {ca0} – {ca1}. Tester round 1 has closed.'
         c_soon = 'Opens 13 October'
         fx = dict(name='Name or nickname', email='Email', learner='Who is learning?', learners=[('child', 'A child (parent applies)'), ('adult', 'An adult · me'), ('family', 'The whole family'), ('teacher', 'A teacher · classroom')], age='Child’s age band (optional)', ages=['', '4–6', '7–9', '10–12', '13+'], country='Country · region', device='Device', devices=[('iphone', 'iPhone'), ('ipad', 'iPad'), ('both', 'Both')], channel='Your blog or social channel where the review will go', note='One line (optional — why Korean?)', consent='I have read the rules and agree that my details are used only to run the event and that my review may be quoted.', submit='Apply for the challenge', ok='Got it. We’ll email you on 1 November with the kick-off.', err='Couldn’t send. Please try again in a moment.', many='This email has already applied.')
-    H_ = dict(ko=dict(eyebrow='30일 챌린지 · 11월', do='해야 하는 것', doNote='게시판과 본인 SNS, 둘 다 남겨야 심사 대상이에요.', score='심사 기준 100점', scoreNote='추첨이 아니라 심사예요. 기준은 이 셋뿐.', prize='경품', rules='공식 규칙 10조', apply='신청', tester='체험단 1기 · 10월', ch='30일 챌린지 · 11월', page='30일 챌린지 — Meta AI 글래스 | Hangeul Cubs'),
-              en=dict(eyebrow='30-Day Challenge · November', do='What to do', doNote='Both the board review and your own social post are required to be judged.', score='Judging · 100 points', scoreNote='Judged, not drawn. These three criteria only.', prize='Prizes', rules='Official rules', apply='Apply', tester='Testers · October', ch='30-Day Challenge · November', page='30-Day Challenge — Meta AI glasses | Hangeul Cubs'))[l]
+    H_ = dict(ko=dict(eyebrow='30일 챌린지 · 11월', do='해야 하는 것', doNote='게시판과 본인 SNS, 둘 다 남겨야 심사 대상이에요.', score='심사 기준 100점', scoreNote='추첨이 아니라 심사예요. 기준은 이 셋뿐.', prize='경품', rules='공식 규칙 10조', apply='신청', tester='체험단 1기 · 종료', ch='30일 챌린지 · 11월', page='30일 챌린지 — Meta AI 글래스 | Hangeul Cubs'),
+              en=dict(eyebrow='30-Day Challenge · November', do='What to do', doNote='Both the board review and your own social post are required to be judged.', score='Judging · 100 points', scoreNote='Judged, not drawn. These three criteria only.', prize='Prizes', rules='Official rules', apply='Apply', tester='Testers · Closed', ch='30-Day Challenge · November', page='30-Day Challenge — Meta AI glasses | Hangeul Cubs'))[l]
     build_challenge(l, dict(title=c_title, lead=c_lead, steps=c_steps, do=c_do, score=c_score, prize=c_prize, rules=c_rules, form_note=c_form_note, soon=c_soon, fx=fx, h=H_), eh)
 
     # BOARD

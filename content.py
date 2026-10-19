@@ -194,6 +194,7 @@ EPISODES = [
 EVENT = dict(
  key='cubs-batchim-2026-10', n=30,
  apply=('2026-09-29','2026-10-12'), announce='2026-10-14', run=('2026-10-15','2026-10-28'), review_due='2026-10-31',
+ closed=True,  # 2026-10-12 마감 (대표 지시 10/19: 종료, 홍보용으로 페이지는 남김)
 )
 
 # ── 30일 챌린지 (2탄) — 대표 승인 2026-09-28: 게시판 + 본인 SNS(블로그 포함) 둘 다 필수, 거기서 심사 ──
@@ -204,6 +205,8 @@ CHALLENGE = dict(
 
 # ── 소식 ───────────────────────────────────────────────────────────────
 NEWS = [
+ ('2026-10-13','받침 마스터 체험단 1기 마감','체험단 1기 신청을 10월 12일로 마감했어요. 관심 가져 주신 분들께 감사해요. 다음은 11월 30일 챌린지 — 신청은 10월 31일까지, 한 명에게 Meta AI 글래스.',
+  'Batchim Master testers — round 1 closed','Applications for tester round 1 closed on 12 October — thank you for your interest. Next up: the 30-Day Challenge in November. Apply by 31 October; Meta AI glasses for one learner.'),
  ('2026-09-28','30일 챌린지 — Meta AI 글래스','11월 한 달, 4남매와 한글을 배우고 우리 게시판과 본인 SNS에 후기를 남기면 한 명에게 Ray-Ban Meta AI 글래스. 신청은 10월 13일부터.',
   '30-Day Challenge — Meta AI glasses','Learn Korean with the cubs through November, post your review on our board and your own social channel, and one person gets Ray-Ban Meta AI glasses. Applications open 13 October.'),
  ('2026-09-28','AP Edu 문을 엽니다','한글컵스 공식 사이트. 4남매 소개, 유튜브 에피소드, 앱 안내, 체험단 모집, 게시판을 한곳에.',

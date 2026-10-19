@@ -177,4 +177,17 @@ FR = {
  "News — Hangeul Cubs": "Actus — Hangeul Cubs", "AP Edu news": "Actus AP Edu",
  "The Cubs — Hangeul Cubs": "Les tigres — Hangeul Cubs",
  "Aari — Hangeul Cubs": "Aari — Hangeul Cubs",
+ # 체험단 1기 마감 (2026-10-19)
+ "Testers · Closed": "Testeurs · Terminé",
+ "Tester programme · round 1 · closed": "Programme testeurs · 1re session · terminé",
+ "Closed": "Terminé",
+ "See the challenge": "Voir le défi",
+ "Applications · closed": "Inscriptions · closes",
+ "Applications for tester round 1 closed on 12 October. The next event, the 30-Day Challenge in November, is open for applications until 31 October.": "Les inscriptions à la session testeurs 1 sont closes depuis le 12 octobre. Le prochain événement, le Défi 30 jours de novembre, est ouvert aux inscriptions jusqu’au 31 octobre.",
+ "Kids, adults, families, teachers. (Closed)": "Enfants, adultes, familles, enseignants. (Terminé)",
+ "30 days of Korean with the cubs.": "30 jours de coréen avec les tigres.",
+ "Tester round 1 has closed. The 30-Day Challenge is open — apply by 2026-10-31; Meta AI glasses for one learner.": "La session testeurs 1 est terminée. Le Défi 30 jours est ouvert — inscription avant le 31/10/2026 ; des lunettes Meta AI pour un participant.",
+ "Apply for the challenge": "S’inscrire au défi",
+ "Batchim Master testers — round 1 closed": "Testeurs Batchim Master — 1re session terminée",
+ "Applications for tester round 1 closed on 12 October — thank you for your interest. Next up: the 30-Day Challenge in November. Apply by 31 October; Meta AI glasses for one learner.": "Les inscriptions à la session testeurs 1 sont closes depuis le 12 octobre — merci de votre intérêt. Prochaine étape : le Défi 30 jours en novembre. Inscription avant le 31 octobre ; des lunettes Meta AI pour un participant.",
 }

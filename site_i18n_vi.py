@@ -177,4 +177,17 @@ VI = {
  "Five vowel lessons (ㅏ ㅑ ㅓ ㅕ ㅗ), two conversation episodes, two adult-beginner clips and a parent guide are on the channel.": "Năm bài nguyên âm (ㅏ ㅑ ㅓ ㅕ ㅗ), hai tập hội thoại, hai clip cho người lớn mới học và một hướng dẫn cho phụ huynh đã có trên kênh.",
  "News — Hangeul Cubs": "Tin tức — Hangeul Cubs", "AP Edu news": "Tin tức AP Edu",
  "The Cubs — Hangeul Cubs": "Bốn chú hổ — Hangeul Cubs",
+ # 체험단 1기 마감 (2026-10-19)
+ "Testers · Closed": "Dùng thử · Đã kết thúc",
+ "Tester programme · round 1 · closed": "Chương trình dùng thử · đợt 1 · đã kết thúc",
+ "Closed": "Đã kết thúc",
+ "See the challenge": "Xem thử thách",
+ "Applications · closed": "Đăng ký · đã kết thúc",
+ "Applications for tester round 1 closed on 12 October. The next event, the 30-Day Challenge in November, is open for applications until 31 October.": "Đăng ký dùng thử đợt 1 đã kết thúc ngày 12/10. Sự kiện tiếp theo, Thử thách 30 ngày trong tháng 11, đang mở đăng ký đến 31/10.",
+ "Kids, adults, families, teachers. (Closed)": "Trẻ em, người lớn, gia đình, giáo viên. (Đã kết thúc)",
+ "30 days of Korean with the cubs.": "30 ngày học tiếng Hàn cùng bốn chú hổ.",
+ "Tester round 1 has closed. The 30-Day Challenge is open — apply by 2026-10-31; Meta AI glasses for one learner.": "Đợt dùng thử 1 đã kết thúc. Thử thách 30 ngày đang mở — đăng ký trước 31/10/2026; kính Meta AI cho một người học.",
+ "Apply for the challenge": "Đăng ký thử thách",
+ "Batchim Master testers — round 1 closed": "Dùng thử Batchim Master — đợt 1 đã kết thúc",
+ "Applications for tester round 1 closed on 12 October — thank you for your interest. Next up: the 30-Day Challenge in November. Apply by 31 October; Meta AI glasses for one learner.": "Đăng ký dùng thử đợt 1 đã kết thúc ngày 12/10 — cảm ơn bạn đã quan tâm. Tiếp theo: Thử thách 30 ngày trong tháng 11. Đăng ký trước 31/10; kính Meta AI cho một người học.",
 }

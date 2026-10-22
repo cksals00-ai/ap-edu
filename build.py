@@ -2,7 +2,7 @@
 """AP Edu — Hangeul Cubs 사이트 빌더. python3 build.py → 정적 파일 (GitHub Pages, edu.apholdings.kr)."""
 import os, html
 from content import CUBS, UNITS, LESSONS, EPISODES, EVENT, CHALLENGE, NEWS, STORE, YT, APP_ID
-OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '8'
+OUT = '.'; ORIGIN = 'https://edu.apholdings.kr'; V = '9'
 e = html.escape
 T = {
  'ko': dict(lang='ko', other='en', otherLabel='EN',
@@ -10,15 +10,15 @@ T = {
    heroEyebrow='AP EDU · HANGEUL CUBS', heroTitle=('호랑이 4남매와', '배우는 한글.'),
    heroLead='한 편에 글자 하나. 보고, 말하고, 쓰고, 노래한다. 한국어를 처음 만나는 아이와 어른을 위해.',
    cta='4남매 만나기', cta2='첫 레슨 보기', plat='iPhone · iPad 무료 · YouTube @hangeulcubs',
-   stats=[('42', '무료 레슨', '받침 일곱 소리부터 생활 단어까지'), ('5', '유튜브 레슨', 'ㅏ ㅑ ㅓ ㅕ ㅗ — 매주 이어집니다'), ('3', '언어 힌트', '영어 · 베트남어 · 프랑스어'), ('0', '계정 · 광고', '오프라인 · 기기 내장 발음')],
-   cubs='4남매', cubsLead='받침 하나씩, 네 명이 나눠 가르친다.', episodes='에피소드', episodesLead='한 편에 글자 하나. 유튜브에서.',
+   stats=[('42', '무료 레슨', '받침 일곱 소리부터 생활 단어까지'), ('2', '새 모험 본편', 'ㅏ → ㅑ · 네 친구와 5분 이상'), ('3', '언어 힌트', '영어 · 베트남어 · 프랑스어'), ('0', '계정 · 광고', '오프라인 · 기기 내장 발음')],
+   cubs='4남매', cubsLead='받침 하나씩, 네 명이 나눠 가르친다.', episodes='에피소드', episodesLead='새 모험은 ㅏ부터 ㅑ 순서로. 기존 짧은 레슨과 구분해 만나세요.',
    app='앱', appLead='배우고 · 듣고 · 풀고. 세 화면, 한 흐름.', event='이벤트', eventLead='받침 마스터를 먼저 써 보고, 후기 한 편.',
    news='소식', all='전체 보기', watch='유튜브에서 보기', words='이 편의 단어', chapters='구간', teaches='맡은 받침', hosts='앱에서 진행하는 레슨',
    look='생김새', role='역할', story='이야기', sheet='모델 시트', sheetNote='2D 턴어라운드 · 표정 시트 (제작용 원화)',
    free='무료', master='받침 마스터', masterNote='18레슨 · 108단어 — 쓰는 대로 읽지 않는 소리들. 앱 안 결제 ₩4,400 · 업데이트 심사 중',
    lessonN='과', unitLessons='레슨', store='App Store', ytch='유튜브 채널', privacy='개인정보처리방침', company='회사',
    studio='AP Edu는 A.P Holdings의 교육 레이블입니다.', footer_note='Hangeul Cubs © 2026 AP Edu / A.P Holdings. 캐릭터 · 아트 · 콘텐츠는 AP Edu의 자산입니다. 일러스트는 AI 도구로 제작했습니다.',
-   applyBtn='체험단 신청', dl='앱 받기', kinds={'lesson': '글자 레슨', 'talk': '회화편', 'adult': '성인 초보', 'parent': '보호자 가이드', 'short': '쇼츠'},
+   applyBtn='체험단 신청', dl='앱 받기', kinds={'adventure': '새 모험 본편', 'lesson': '기존 짧은 레슨', 'talk': '회화편', 'adult': '성인 초보', 'parent': '보호자 가이드', 'short': '쇼츠'},
    prev='이전', next='다음', backCubs='4남매 목록',
  ),
  'en': dict(lang='en', other='ko', otherLabel='KO',
@@ -26,15 +26,15 @@ T = {
    heroEyebrow='AP EDU · HANGEUL CUBS', heroTitle=('Learn Korean with', 'four tiger cubs.'),
    heroLead='One letter per episode. See it, say it, write it, sing it. For children and adults meeting Korean for the first time.',
    cta='Meet the cubs', cta2='Watch Lesson 1', plat='Free on iPhone · iPad · YouTube @hangeulcubs',
-   stats=[('42', 'free lessons', 'from the seven bottom blocks to everyday words'), ('5', 'YouTube lessons', 'ㅏ ㅑ ㅓ ㅕ ㅗ — new ones weekly'), ('3', 'hint languages', 'English · Vietnamese · French'), ('0', 'accounts · ads', 'offline · on-device Korean voice')],
-   cubs='The Cubs', cubsLead='One bottom block each. Four teachers, one alphabet.', episodes='Episodes', episodesLead='One letter per episode, on YouTube.',
+   stats=[('42', 'free lessons', 'from the seven bottom blocks to everyday words'), ('2', 'new adventures', 'ㅏ → ㅑ · over five minutes with all four cubs'), ('3', 'hint languages', 'English · Vietnamese · French'), ('0', 'accounts · ads', 'offline · on-device Korean voice')],
+   cubs='The Cubs', cubsLead='One bottom block each. Four teachers, one alphabet.', episodes='Episodes', episodesLead='Start the new adventures with ㅏ, then ㅑ. Earlier short lessons are listed separately.',
    app='The app', appLead='Learn · listen · quiz. Three screens, one flow.', event='Events', eventLead='Try Batchim Master first, write one review.',
    news='News', all='See all', watch='Watch on YouTube', words='Words in this episode', chapters='Chapters', teaches='Bottom block', hosts='Lessons hosted in the app',
    look='Look', role='Role', story='Story', sheet='Model sheet', sheetNote='2D turnaround · expression sheet (production art)',
    free='Free', master='Batchim Master', masterNote='18 lessons · 108 words — where spelling and sound disagree. In-app purchase ₩4,400 · update in review',
    lessonN='', unitLessons='lessons', store='App Store', ytch='YouTube channel', privacy='Privacy policy', company='Company',
    studio='AP Edu is the education label of A.P Holdings.', footer_note='Hangeul Cubs © 2026 AP Edu / A.P Holdings. Characters, art and content are assets of AP Edu. Illustrations were made with AI tools.',
-   applyBtn='Apply to test', dl='Get the app', kinds={'lesson': 'Letter lesson', 'talk': 'Conversation', 'adult': 'Adult beginner', 'parent': 'Parent guide', 'short': 'Shorts'},
+   applyBtn='Apply to test', dl='Get the app', kinds={'adventure': 'New adventure', 'lesson': 'Earlier short lesson', 'talk': 'Conversation', 'adult': 'Adult beginner', 'parent': 'Parent guide', 'short': 'Shorts'},
    prev='Prev', next='Next', backCubs='All cubs',
  ),
 }
@@ -75,8 +75,9 @@ def ep_card(l, x, compact=False):
     t = T[l]; kind = t['kinds'][x['kind']]
     n = f'{"레슨" if l=="ko" else "Lesson"} {x["n"]}' if x['n'] else kind
     words = ''.join(f'<span><b>{e(k)}</b> {e(v)}</span>' for k, v in x['words'][:3])
+    full = f'<p><a class="more" href="https://youtu.be/{x["full_id"]}" target="_blank" rel="noopener">{"본편 보기" if l=="ko" else "Watch the full lesson"} →</a></p>' if x.get('full_id') else ''
     return f'''<article class="ecard{' short' if x['kind']=='short' else ''}" id="{x['id']}"><a class="thumb" href="https://youtu.be/{x['id']}" target="_blank" rel="noopener" data-yt="{x['id']}" aria-label="{e(x['title_en'] if l=='en' else x['title'])}"><img src="/assets/yt/{x['id']}.jpg" alt="" loading="lazy" width="1280" height="720"><span class="play" aria-hidden="true">▶</span><span class="len">{x['len']}</span></a>
-<div class="meta"><span class="role">{e(n)} · <i class="letter">{e(x['letter'])}</i> {e(x['rr'])}</span><h3>{e(x['title'] if l=='ko' else x['title_en'])}</h3>{'' if compact else f'<p>{e(x["ko"] if l=="ko" else x["en"])}</p>'}{f'<div class="words">{words}</div>' if words and not compact else ''}</div></article>'''
+<div class="meta"><span class="role">{e(n)} · <i class="letter">{e(x['letter'])}</i> {e(x['rr'])}</span><h3>{e(x['title'] if l=='ko' else x['title_en'])}</h3>{'' if compact else f'<p>{e(x["ko"] if l=="ko" else x["en"])}</p>'}{f'<div class="words">{words}</div>' if words and not compact else ''}{full}</div></article>'''
 
 def lesson_rows(l, host=None, unit=None):
     t = T[l]; rows = [x for x in LESSONS if (host is None or x[1] == host) and (unit is None or x[2] == unit)]
@@ -120,7 +121,8 @@ def build_challenge(l, d, eh):
 for l in ('ko', 'en'):
     t = T[l]
     cubs = ''.join(cub_card(l, c) for c in CUBS)
-    eps = ''.join(ep_card(l, x, compact=True) for x in [x for x in EPISODES if x['kind'] != 'short'][:6])
+    eps = ''.join(ep_card(l, x, compact=True) for x in [x for x in EPISODES if x['kind'] == 'adventure'])
+    previews = ''.join(ep_card(l, x, compact=True) for x in EPISODES if x.get('full_id'))
     stats = ''.join(f'<article><b class="big">{a}</b><h3>{e(h_)}</h3><p>{e(d_)}</p></article>' for a, h_, d_ in t['stats'])
     news = ''.join(f'<article><time>{n[0]}</time><h3>{e(n[1] if l=="ko" else n[3])}</h3><p>{e(n[2] if l=="ko" else n[4])}</p></article>' for n in NEWS)
     ev_ko = f'체험단 1기는 마감됐어요. 지금은 30일 챌린지 신청 중 — {CHALLENGE["apply"][1][5:].replace("-", "/")}까지, 한 명에게 Meta AI 글래스.'
@@ -129,10 +131,11 @@ for l in ('ko', 'en'):
     ev_btn = '챌린지 신청' if l == 'ko' else 'Apply for the challenge'
     body = f'''<section class="hero"><img class="bg" src="/assets/art/family.jpg" alt="" width="1400" height="787"><div class="shade"></div>
 <div class="wrap hero-copy"><span class="eyebrow">{e(t['heroEyebrow'])}</span><h1>{e(t['heroTitle'][0])}<br>{e(t['heroTitle'][1])}</h1><p class="lead">{e(t['heroLead'])}</p>
-<div class="actions"><a class="btn" href="/{l}/cubs/">{e(t['cta'])}</a><a class="btn ghost" href="/{l}/episodes/#vpZ7JeHaz6I">{e(t['cta2'])}</a></div><p class="plat">{e(t['plat'])}</p></div></section>
+<div class="actions"><a class="btn" href="/{l}/cubs/">{e(t['cta'])}</a><a class="btn ghost" href="/{l}/episodes/#MTJwpWDPedc">{e(t['cta2'])}</a></div><p class="plat">{e(t['plat'])}</p></div></section>
 <section class="feat"><div class="wrap"><div class="fgrid4">{stats}</div></div></section>
 <section class="sec"><div class="wrap"><div class="sh"><h2>{e(t['cubs'])}</h2><p>{e(t['cubsLead'])}</p><a class="more" href="/{l}/cubs/">{e(t['all'])} →</a></div><div class="cgrid">{cubs}</div></div></section>
 <section class="sec soft"><div class="wrap"><div class="sh"><h2>{e(t['episodes'])}</h2><p>{e(t['episodesLead'])}</p><a class="more" href="/{l}/episodes/">{e(t['all'])} →</a></div><div class="egrid">{eps}</div></div></section>
+<section class="sec"><div class="wrap"><div class="sh"><h2>{'새 쇼츠 · 본편으로 이어 보기' if l=='ko' else 'New Shorts · continue to the full lesson'}</h2></div><div class="egrid shorts">{previews}</div></div></section>
 <section class="sec"><div class="wrap app-tease"><div><span class="eyebrow">APP</span><h2>{e(t['appLead'])}</h2><p class="lead">{'42레슨 무료. 받침을 색으로 나눠 보여 주고, 기기 안의 한국어 목소리로 읽어 준다. 계정도 광고도 없다.' if l=='ko' else '42 free lessons. The bottom block is shown in its own colour and read aloud by the device’s Korean voice. No account, no ads.'}</p><div class="actions"><a class="btn" href="{STORE[l]}" target="_blank" rel="noopener">{e(t['dl'])}</a><a class="btn ghost" href="/{l}/app/">{e(t['all'])}</a></div></div><img src="/assets/art/screens.jpg" alt="" loading="lazy" width="1400" height="787"></div></section>
 <section class="sec event-band"><div class="wrap"><div class="eband"><div><span class="eyebrow">{e(t['event'])}</span><h2>{e(ev_h2)}</h2><p>{e(ev_ko if l=='ko' else ev_en)}</p></div><a class="btn" href="/{l}/event/challenge/">{e(ev_btn)}</a></div></div></section>
 <section class="sec"><div class="wrap"><div class="sh"><h2>{e(t['news'])}</h2><a class="more" href="/{l}/news/">{e(t['all'])} →</a></div><div class="ngrid">{news}</div></div></section>'''
@@ -156,17 +159,19 @@ for l in ('ko', 'en'):
         out(f'/{l}/cubs/{c["id"]}/index.html', shell(l, f'{nm} — Hangeul Cubs', c['tag'] if l == 'ko' else c['tag_en'], f'/{l}/cubs/{c["id"]}/', body, og=f'/assets/art/{c["id"]}_3d.png'))
 
     # EPISODES
-    groups = [('lesson', '글자 레슨' if l == 'ko' else 'Letter lessons', '모음 열 개부터. 한 편에 글자 하나, 단어 셋, 쓰기 한 번.' if l == 'ko' else 'Starting with the ten vowels. One letter, three words and one writing pass per episode.'),
+    groups = [('adventure', '새 모험 본편 · 여기서 시작' if l == 'ko' else 'New adventures · start here', '1편 ㅏ → 2편 ㅑ. 네 친구가 함께하는 5분 이상의 이야기.' if l == 'ko' else 'Lesson 1: ㅏ → Lesson 2: ㅑ. Stories over five minutes with all four cubs.'),
+              ('short', '이야기 미리보기 · 쇼츠' if l == 'ko' else 'Story previews · Shorts', '짧게 만나고, 카드 아래 본편 보기로 이어가세요.' if l == 'ko' else 'Meet the cubs, then use Watch the full lesson below each preview.'),
+              ('lesson', '기존 짧은 레슨' if l == 'ko' else 'Earlier short lessons', '새 모험 본편과 별개의 짧은 연습 영상입니다.' if l == 'ko' else 'Short practice videos, separate from the new adventure series.'),
               ('talk', '회화편' if l == 'ko' else 'Conversation', '상황 하나에 문장 서너 개.' if l == 'ko' else 'A few phrases for one situation.'),
               ('adult', '성인 초보 · 여행자' if l == 'ko' else 'Adult beginners · travellers', '1분 안에 끝나는 실전 한 컷.' if l == 'ko' else 'One practical clip, under a minute.'),
               ('parent', '보호자 가이드' if l == 'ko' else 'Parent guide', '집에서 아이와 함께 하는 법.' if l == 'ko' else 'How to practise with your child at home.'),
-              ('short', '쇼츠' if l == 'ko' else 'Shorts', '30초 안에 글자 하나.' if l == 'ko' else 'One letter in thirty seconds.')]
+]
     secs = ''
     for k, h_, d_ in groups:
         items = [x for x in EPISODES if x['kind'] == k]
         secs += f'<div class="sh"><h2>{e(h_)}</h2><p>{e(d_)}</p></div><div class="egrid{" shorts" if k=="short" else ""}">{"".join(ep_card(l, x, compact=(k=="short")) for x in items)}</div>'
     body = f'<section class="page"><div class="wrap"><span class="eyebrow">YOUTUBE @HANGEULCUBS</span><h1>{e(t["episodes"])}</h1><p class="lead">{e(t["episodesLead"])} <a href="{YT}" target="_blank" rel="noopener">{e(t["ytch"])} →</a></p>{secs}</div></section><div id="yt-modal" class="yt-modal" hidden><div class="yt-box"><button class="yt-x" type="button" aria-label="close">×</button><div class="yt-frame"></div></div></div>'
-    out(f'/{l}/episodes/index.html', shell(l, f'{t["episodes"]} — Hangeul Cubs', t['episodesLead'], f'/{l}/episodes/', body, og='/assets/yt/vpZ7JeHaz6I.jpg'))
+    out(f'/{l}/episodes/index.html', shell(l, f'{t["episodes"]} — Hangeul Cubs', t['episodesLead'], f'/{l}/episodes/', body, og='/assets/yt/MTJwpWDPedc.jpg'))
 
     # APP
     unit_blocks = ''

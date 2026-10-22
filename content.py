@@ -205,6 +205,8 @@ CHALLENGE = dict(
 
 # ── 소식 ───────────────────────────────────────────────────────────────
 NEWS = [
+ ('2026-10-22','네 친구의 새 모음 모험과 쇼츠 공개','다호·꼬비·아리·라미가 함께하는 새 ㅏ·ㅑ 본편을 공개했어요. 아이스크림 그림에서 보물지도로 이어지는 5분 이상의 모험을 순서대로 만나세요. 새 쇼츠 세 편에서 이야기를 미리 볼 수 있어요. 기존 짧은 레슨은 따로 모았습니다.',
+  'New vowel adventures and three Shorts','The new ㅏ and ㅑ adventures bring all four cubs together for over five minutes each. Start with the ice cream picture, then follow the treasure map. Three new Shorts preview the stories; earlier short lessons remain in their own section.'),
  ('2026-10-13','받침 마스터 체험단 1기 마감','체험단 1기 신청을 10월 12일로 마감했어요. 관심 가져 주신 분들께 감사해요. 다음은 11월 30일 챌린지 — 신청은 10월 31일까지, 한 명에게 Meta AI 글래스.',
   'Batchim Master testers — round 1 closed','Applications for tester round 1 closed on 12 October — thank you for your interest. Next up: the 30-Day Challenge in November. Apply by 31 October; Meta AI glasses for one learner.'),
  ('2026-09-28','30일 챌린지 — Meta AI 글래스','11월 한 달, 4남매와 한글을 배우고 우리 게시판과 본인 SNS에 후기를 남기면 한 명에게 Ray-Ban Meta AI 글래스. 신청은 10월 13일부터.',
@@ -216,3 +218,29 @@ NEWS = [
  ('2026-09-26','유튜브 레슨 1~5 공개','모음 ㅏ·ㅑ·ㅓ·ㅕ·ㅗ 다섯 편과 회화편(인사·식사), 성인 초보 두 편, 보호자 가이드가 채널에 올라왔습니다.',
   'YouTube lessons 1–5 are up','Five vowel lessons (ㅏ ㅑ ㅓ ㅕ ㅗ), two conversation episodes, two adult-beginner clips and a parent guide are on the channel.'),
 ]
+
+# Published 2026-10-20 / 2026-10-22. The new ㅓ adventure is not yet published.
+ADVENTURES = [
+ dict(id='MTJwpWDPedc', kind='adventure', n=1, letter='ㅏ', rr='AH', len='5:21', date='2026-10-20',
+  title='ㅏ · 아이스크림 그림으로 시작하는 모험', title_en='ㅏ · Ice Cream Adventure',
+  words=[('아빠','dad'),('아기','baby'),('아이스크림','ice cream')],
+  ko='여기서 시작해요. 아이스크림 그림을 발견한 네 친구와 아 소리, 두 획 쓰기, 세 단어와 그림 퀴즈를 함께 연습해요.',
+  en='Start here. An ice cream picture brings four friends together to practise the AH sound, two writing strokes, three words and a picture quiz.'),
+ dict(id='viRGJL0LBSg', kind='adventure', n=2, letter='ㅑ', rr='YA', len='5:24', date='2026-10-20',
+  title='ㅑ · 그림 뒷면의 보물지도', title_en='ㅑ · Treasure Hunt Adventure',
+  words=[('야구','baseball'),('야옹','meow'),('야호','hooray')],
+  ko='ㅏ 편 다음 이야기. 그림 뒷면에서 발견한 보물지도를 따라가며 야 소리와 세 획 쓰기, 야구·야옹·야호를 배워요.',
+  en='Continue after ㅏ. A treasure map on the back of the picture leads the cubs through the YA sound, three writing strokes, baseball, meow and hooray.'),
+]
+PROMO_SHORTS = [
+ dict(id='KNwy8M_h-To', kind='short', n=None, letter='ㅏ', rr='AH', len='0:20', date='2026-10-22',
+  title='아이스크림일까, 그림일까?', title_en='Ice Cream or a Picture?', words=[],
+  ko='네 친구의 아이스크림 이야기 미리보기.', en='A preview of the four friends and their ice cream story.', full_id='MTJwpWDPedc'),
+ dict(id='CL0ZxkLzETs', kind='short', n=None, letter='ㅑ', rr='YA', len='0:20', date='2026-10-22',
+  title='아이스크림 보물찾기!', title_en='An Ice Cream Treasure Hunt!', words=[],
+  ko='그림 뒷면에는 무엇이 숨어 있을까요?', en='What is hiding on the back of the picture?', full_id='viRGJL0LBSg'),
+ dict(id='wcguBZgnt8s', kind='short', n=None, letter='4남매', rr='The Cubs', len='0:25', date='2026-10-22',
+  title='네 친구를 만나 보세요', title_en='Meet Four Tiger Friends', words=[],
+  ko='다호·꼬비·아리·라미를 만나고 첫 모험으로 출발해요.', en='Meet Daho, Kkobi, Ari and Rami, then start the first adventure.', full_id='MTJwpWDPedc'),
+]
+EPISODES = ADVENTURES + PROMO_SHORTS + EPISODES
